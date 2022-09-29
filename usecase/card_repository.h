@@ -1,0 +1,19 @@
+//
+// Created by biosvos on 9/29/22.
+//
+
+#ifndef MEMORIZE_CARD_REPOSITORY_H
+#define MEMORIZE_CARD_REPOSITORY_H
+
+#include <optional>
+#include "../domain/card.h"
+
+class CardRepository {
+public:
+    virtual std::error_code Add(const Card &card) = 0;
+
+    virtual std::optional<Card> Get(std::string_view word) = 0;
+};
+
+
+#endif //MEMORIZE_CARD_REPOSITORY_H

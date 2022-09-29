@@ -12,7 +12,7 @@ class Card {
 public:
     Card(std::string word, std::vector<std::string> meanings,
          uint64_t next_time_in_sec,
-         uint64_t success_times_in_a_row = 0);
+         uint64_t success_times_in_a_row);
 
 public:
     [[nodiscard]] const std::string &GetWord() const;
