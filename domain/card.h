@@ -10,12 +10,18 @@
 
 class Card {
 public:
-    Card(std::string_view word, const std::vector<std::string_view> &meanings);
+    Card(std::string word, std::vector<std::string> meanings,
+         uint64_t next_time_in_sec,
+         uint64_t success_times_in_a_row = 0);
 
 public:
     [[nodiscard]] const std::string &GetWord() const;
 
     [[nodiscard]] const std::vector<std::string> &GetMeanings() const;
+
+    [[nodiscard]] uint64_t GetNextTimeInSec() const;
+
+    [[nodiscard]] uint64_t GetSuccessTimesInARow() const;
 
 private:
     std::string word_;
