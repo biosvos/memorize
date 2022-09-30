@@ -8,8 +8,10 @@
 #include <optional>
 #include "../domain/card.h"
 
-class CardRepository {
+class ICardRepository {
 public:
+    virtual ~ICardRepository() = default;
+
     virtual std::error_code Add(const Card &card) = 0;
 
     virtual std::optional<Card> Get(std::string_view word) = 0;

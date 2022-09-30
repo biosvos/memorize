@@ -1,1 +1,4 @@
 add_library(card_controller card_controller.cpp)
+
+add_library(memory_repository memory_repository.cpp)
+target_link_libraries(memory_repository card)

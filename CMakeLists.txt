@@ -9,3 +9,6 @@ add_subdirectory(adapter)
 add_subdirectory(infra)
 
 add_executable(memorize main.cpp)
+target_link_libraries(memorize
+        app
+        add_card memory_repository)

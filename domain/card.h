@@ -14,6 +14,8 @@ public:
          uint64_t next_time_in_sec,
          uint64_t success_times_in_a_row);
 
+    Card() = default;
+
 public:
     [[nodiscard]] const std::string &GetWord() const;
 
@@ -26,8 +28,8 @@ public:
 private:
     std::string word_;
     std::vector<std::string> meanings_;
-    uint64_t next_time_in_sec_;
-    uint64_t success_times_in_a_row_;
+    uint64_t next_time_in_sec_ = 0;
+    uint64_t success_times_in_a_row_ = 0;
 };
 
 #endif //MEMORIZE_CARD_H

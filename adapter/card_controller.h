@@ -5,20 +5,18 @@
 #ifndef MEMORIZE_CARD_CONTROLLER_H
 #define MEMORIZE_CARD_CONTROLLER_H
 
-
 #include <system_error>
+
+#include "../usecase/add_card.h"
 
 class CardController {
 public:
-    virtual std::error_code Create() = 0;
+    std::error_code Create(const std::string &word, const std::vector<std::string> &meanings, uint64_t create_time);
 
-    virtual std::error_code Update() = 0;
+    explicit CardController(std::shared_ptr<AddCard::IRequester> requester);
 
-    virtual std::error_code Delete() = 0;
-
-    virtual std::error_code List() = 0;
-
-    virtual std::error_code Get() = 0;
+private:
+    std::shared_ptr<AddCard::IRequester> add_requester_;
 };
 
 

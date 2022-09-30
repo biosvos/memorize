@@ -24,13 +24,13 @@ using AddCard = Usecase<AddCardRequest, AddCardResponse>;
 
 class AddCardUsecase : public AddCard::IRequester {
 public:
-    explicit AddCardUsecase(std::shared_ptr<AddCard::IResponder> responder);
+    AddCardUsecase(std::shared_ptr<AddCard::IResponder> responder, std::shared_ptr<ICardRepository> repository);
 
     std::error_code Request(const AddCardRequest &req) override;
 
 private:
     std::shared_ptr<AddCard::IResponder> responder_;
-    std::shared_ptr<CardRepository> repository_;
+    std::shared_ptr<ICardRepository> repository_;
 };
 
 #endif //MEMORIZE_ADD_CARD_H

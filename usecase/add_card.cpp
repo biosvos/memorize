@@ -9,8 +9,10 @@
 #include "add_card.h"
 #include "card_error.h"
 
-AddCardUsecase::AddCardUsecase(std::shared_ptr<AddCard::IResponder> responder) :
-        responder_(std::move(responder)) {}
+AddCardUsecase::AddCardUsecase(std::shared_ptr<AddCard::IResponder> responder,
+                               std::shared_ptr<ICardRepository> repository) :
+        responder_(std::move(responder)),
+        repository_(std::move(repository)) {}
 
 std::error_code AddCardUsecase::Request(const AddCardRequest &req) {
     auto card = repository_->Get(req.word);
@@ -34,3 +36,4 @@ std::error_code AddCardUsecase::Request(const AddCardRequest &req) {
     }
     return {};
 }
+
