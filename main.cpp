@@ -14,9 +14,24 @@ public:
     }
 };
 
-int main() {
+int main2() {
     auto app = std::make_shared<App>();
     app->SetController(std::make_shared<Factory>());
     app->Run();
+    return 0;
+}
+
+#include "infra/web.h"
+#include <drogon/drogon.h>
+
+int main() {
+    auto app = std::make_shared<App>();
+    auto repository = std::make_shared<MemoryRepository>();
+    auto add_card = std::make_shared<AddCardUsecase>(app, repository);
+
+    auto controller = std::make_shared<CardController>(add_card);
+//
+    drogon::app().registerController(std::make_shared<Web>(controller));
+    drogon::app().addListener("127.0.0.1", 8888).run();
     return 0;
 }
