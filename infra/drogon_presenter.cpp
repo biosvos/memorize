@@ -11,7 +11,7 @@ void DrogonPresenter::Response(const AddCardResponse &rsp) {
     auto ret = drogon::HttpResponse::newHttpResponse();
     switch (rsp.result) {
         case AddCardError::kAddCardOk:
-            ret->setStatusCode(drogon::k200OK);
+            ret->setStatusCode(drogon::k201Created);
             callback_(ret);
             break;
         case AddCardError::kAddCardConflicted:
