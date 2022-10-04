@@ -15,6 +15,8 @@ public:
 
     std::optional<Card> Get(std::string_view word) override;
 
+    std::error_code Update(const Card &card) override;
+
 private:
     std::unordered_map<std::string, Card> cards_;
 };

@@ -11,9 +11,9 @@
 
 class CardController {
 public:
-    void Create(const std::string &word, const std::vector<std::string> &meanings, uint64_t create_time);
-
     explicit CardController(std::shared_ptr<AddCard::IRequester> requester);
+
+    void Create(const std::string &word, const std::vector<std::string> &meanings, uint64_t create_time);
 
 private:
     std::shared_ptr<AddCard::IRequester> add_requester_;
