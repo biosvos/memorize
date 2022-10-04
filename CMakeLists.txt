@@ -11,5 +11,6 @@ add_subdirectory(infra)
 add_executable(memorize main.cpp)
 target_link_libraries(memorize
         add_card memory_repository
+        update_card
         drogon_presenter
         web)

@@ -14,7 +14,8 @@ public:
     CreateController(std::function<void(const drogon::HttpResponsePtr &)> &callback) override {
         auto presenter = std::make_shared<DrogonPresenter>(callback);
         auto add_card = std::make_shared<AddCardUsecase>(presenter, repository_);
-        return std::make_shared<CardController>(add_card);
+        auto update_card = std::make_shared<UpdateCardUsecase>(presenter, repository_);
+        return std::make_shared<CardController>(add_card, update_card);
     }
 
 private:
