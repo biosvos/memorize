@@ -25,6 +25,7 @@ void Web::AddCard(const drogon::HttpRequestPtr &req,
         callback(drogon::HttpResponse::newNotFoundResponse());
     }
     controller_->Create(word, {""}, 0);
+
     auto rsp = drogon::HttpResponse::newHttpResponse();
     rsp->setStatusCode(drogon::k200OK);
     rsp->setBody("hello");

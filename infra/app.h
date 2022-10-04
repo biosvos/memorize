@@ -17,7 +17,7 @@ public:
     void Run();
 
 private:
-    std::error_code Response(const AddCardResponse &rsp) override;
+    void Response(const AddCardResponse &rsp) override;
 
 private:
     std::shared_ptr<CardController> controller_;

@@ -7,17 +7,17 @@
 
 #include "../domain/card.h"
 #include "add_card.h"
-#include "card_error.h"
 
 AddCardUsecase::AddCardUsecase(std::shared_ptr<AddCard::IResponder> responder,
                                std::shared_ptr<ICardRepository> repository) :
         responder_(std::move(responder)),
         repository_(std::move(repository)) {}
 
-std::error_code AddCardUsecase::Request(const AddCardRequest &req) {
+void AddCardUsecase::Request(const AddCardRequest &req) {
     auto card = repository_->Get(req.word);
     if (card) {
-        return CardError::kAddCardConflicted;
+        responder_->Response(AddCardResponse{.word = req.word});
+        return;
     }
 
     auto err = repository_->Add(Card(req.word,
@@ -26,14 +26,10 @@ std::error_code AddCardUsecase::Request(const AddCardRequest &req) {
                                      0));
     if (err) {
         std::cerr << err << std::endl;
-        return CardError::kAddCardUnknown;
+        responder_->Response(AddCardResponse{.word = req.word});
+        return;
     }
 
-    err = responder_->Response(AddCardResponse{.word = req.word});
-    if (err) {
-        std::cerr << err << std::endl;
-        return CardError::kAddCardUnknown;
-    }
-    return {};
+    responder_->Response(AddCardResponse{.word = req.word});
 }
 

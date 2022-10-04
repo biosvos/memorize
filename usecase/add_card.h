@@ -16,8 +16,15 @@ struct AddCardRequest {
     uint64_t create_time_in_epoch_time;
 };
 
+enum class AddCardError {
+    kAddCardOk,
+    kAddCardConflicted,
+    kAddCardUnknown,
+};
+
 struct AddCardResponse {
     std::string word;
+    AddCardError result;
 };
 
 using AddCard = Usecase<AddCardRequest, AddCardResponse>;
@@ -26,7 +33,7 @@ class AddCardUsecase : public AddCard::IRequester {
 public:
     AddCardUsecase(std::shared_ptr<AddCard::IResponder> responder, std::shared_ptr<ICardRepository> repository);
 
-    std::error_code Request(const AddCardRequest &req) override;
+    void Request(const AddCardRequest &req) override;
 
 private:
     std::shared_ptr<AddCard::IResponder> responder_;

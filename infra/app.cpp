@@ -10,9 +10,20 @@ void App::SetController(const std::shared_ptr<IFactory> &factory) {
     controller_ = factory->CreateController(shared_from_this());
 }
 
-std::error_code App::Response(const AddCardResponse &rsp) {
-    std::cout << rsp.word << " created" << std::endl;
-    return {};
+void App::Response(const AddCardResponse &rsp) {
+    std::cout << rsp.word << " ";
+    switch (rsp.result) {
+        case AddCardError::kAddCardOk:
+            std::cout << "created";
+            break;
+        case AddCardError::kAddCardConflicted:
+            std::cout << "conflicted";
+            break;
+        case AddCardError::kAddCardUnknown:
+            std::cout << "unknown";
+            break;
+    }
+    std::cout << std::endl;
 }
 
 void App::Run() {
