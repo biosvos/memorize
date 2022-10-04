@@ -6,6 +6,8 @@
 #define MEMORIZE_CARD_REPOSITORY_H
 
 #include <optional>
+#include <system_error>
+
 #include "../domain/card.h"
 
 class ICardRepository {

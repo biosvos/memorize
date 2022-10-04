@@ -2,14 +2,12 @@
 // Created by biosvos on 9/30/22.
 //
 
+#include <utility>
 #include "web.h"
 
-#include <utility>
+Web::Web(std::shared_ptr<IWebFactory> factory) :
+        factory_(std::move(factory)) {}
 
-
-Web::Web(std::shared_ptr<CardController> controller) : controller_(std::move(controller)) {
-
-}
 
 void Web::AddCard(const drogon::HttpRequestPtr &req,
                   std::function<void(const drogon::HttpResponsePtr &)> &&callback) const {
@@ -23,12 +21,10 @@ void Web::AddCard(const drogon::HttpRequestPtr &req,
     auto word = json->get("word", "").asString();
     if (word.empty()) {
         callback(drogon::HttpResponse::newNotFoundResponse());
+        return;
     }
-    controller_->Create(word, {""}, 0);
-
-    auto rsp = drogon::HttpResponse::newHttpResponse();
-    rsp->setStatusCode(drogon::k200OK);
-    rsp->setBody("hello");
-    callback(rsp);
+    auto controller = factory_->CreateController(callback);
+    controller->Create(word, {""}, 0);
 }
+
 

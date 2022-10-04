@@ -8,9 +8,11 @@
 #include <drogon/HttpController.h>
 #include "../adapter/card_controller.h"
 
+class IWebFactory;
+
 class Web : public drogon::HttpController<Web, false> {
 public:
-    explicit Web(std::shared_ptr<CardController> controller);
+    explicit Web(std::shared_ptr<IWebFactory> factory);
 
 public:
     METHOD_LIST_BEGIN
@@ -21,7 +23,15 @@ public:
     AddCard(const drogon::HttpRequestPtr &req, std::function<void(const drogon::HttpResponsePtr &)> &&callback) const;
 
 private:
-    std::shared_ptr<CardController> controller_;
+    std::shared_ptr<IWebFactory> factory_;
+};
+
+class IWebFactory {
+public:
+    virtual ~IWebFactory() = default;
+
+    virtual std::shared_ptr<CardController>
+    CreateController(std::function<void(const drogon::HttpResponsePtr &)> &callback) = 0;
 };
 
 

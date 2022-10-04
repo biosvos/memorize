@@ -1,37 +1,31 @@
-#include <iostream>
+#include <utility>
 
-#include "infra/app.h"
-#include "adapter/memory_repository.h"
 #include "usecase/add_card.h"
+#include "adapter/memory_repository.h"
+#include "infra/web.h"
+#include "infra/drogon_presenter.h"
 
-class Factory : public IFactory {
+class Factory : public IWebFactory {
 public:
-    std::shared_ptr<CardController> CreateController(std::shared_ptr<App> app) override {
-        auto repository = std::make_shared<MemoryRepository>();
-        auto add_card = std::make_shared<AddCardUsecase>(app, repository);
+    explicit Factory(std::shared_ptr<ICardRepository> repository) : repository_(std::move(repository)) {}
 
+public:
+    std::shared_ptr<CardController>
+    CreateController(std::function<void(const drogon::HttpResponsePtr &)> &callback) override {
+        auto presenter = std::make_shared<DrogonPresenter>(callback);
+        auto add_card = std::make_shared<AddCardUsecase>(presenter, repository_);
         return std::make_shared<CardController>(add_card);
     }
+
+private:
+    std::shared_ptr<ICardRepository> repository_;
 };
 
-int main2() {
-    auto app = std::make_shared<App>();
-    app->SetController(std::make_shared<Factory>());
-    app->Run();
-    return 0;
-}
-
-#include "infra/web.h"
-#include <drogon/drogon.h>
-
 int main() {
-    auto app = std::make_shared<App>();
     auto repository = std::make_shared<MemoryRepository>();
-    auto add_card = std::make_shared<AddCardUsecase>(app, repository);
-
-    auto controller = std::make_shared<CardController>(add_card);
-//
-    drogon::app().registerController(std::make_shared<Web>(controller));
+    auto factory = std::make_shared<Factory>(repository);
+    auto app = std::make_shared<Web>(factory);
+    drogon::app().registerController(app);
     drogon::app().addListener("127.0.0.1", 8888).run();
     return 0;
 }

@@ -16,7 +16,7 @@ AddCardUsecase::AddCardUsecase(std::shared_ptr<AddCard::IResponder> responder,
 void AddCardUsecase::Request(const AddCardRequest &req) {
     auto card = repository_->Get(req.word);
     if (card) {
-        responder_->Response(AddCardResponse{.word = req.word});
+        responder_->Response(AddCardResponse{.word = req.word, .result=AddCardError::kAddCardConflicted});
         return;
     }
 
@@ -26,10 +26,10 @@ void AddCardUsecase::Request(const AddCardRequest &req) {
                                      0));
     if (err) {
         std::cerr << err << std::endl;
-        responder_->Response(AddCardResponse{.word = req.word});
+        responder_->Response(AddCardResponse{.word = req.word, .result=AddCardError::kAddCardUnknown});
         return;
     }
 
-    responder_->Response(AddCardResponse{.word = req.word});
+    responder_->Response(AddCardResponse{.word = req.word, .result= AddCardError::kAddCardOk});
 }
 

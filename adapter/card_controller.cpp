@@ -9,9 +9,8 @@
 CardController::CardController(std::shared_ptr<AddCard::IRequester> requester) :
         add_requester_(std::move(requester)) {}
 
-std::error_code
+void
 CardController::Create(const std::string &word, const std::vector<std::string> &meanings, uint64_t create_time) {
     add_requester_->Request(AddCardRequest{word, meanings, create_time});
-    return {};
 }
 
