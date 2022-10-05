@@ -26,3 +26,21 @@ std::error_code MemoryRepository::Update(const Card &card) {
     cards_[card.GetWord()] = card;
     return {};
 }
+
+std::vector<Card> MemoryRepository::List() {
+    std::vector<Card> ret;
+    for (const auto &[_, v]: cards_) {
+        ret.push_back(v);
+    }
+    return ret;
+}
+
+std::vector<Card> MemoryRepository::ListBefore(uint64_t time) {
+    std::vector<Card> ret;
+    for (const auto &[_, v]: cards_) {
+        if (v.GetNextTimeInSec() < time) {
+            ret.push_back(v);
+        }
+    }
+    return ret;
+}

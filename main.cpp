@@ -1,6 +1,5 @@
 #include <utility>
 
-#include "usecase/add_card.h"
 #include "adapter/memory_repository.h"
 #include "infra/web.h"
 #include "infra/drogon_presenter.h"
@@ -15,7 +14,8 @@ public:
         auto presenter = std::make_shared<DrogonPresenter>(callback);
         auto add_card = std::make_shared<AddCardUsecase>(presenter, repository_);
         auto update_card = std::make_shared<UpdateCardUsecase>(presenter, repository_);
-        return std::make_shared<CardController>(add_card, update_card);
+        auto list_cards = std::make_shared<ListCardsUsecase>(presenter, repository_);
+        return std::make_shared<CardController>(add_card, update_card, list_cards);
     }
 
 private:

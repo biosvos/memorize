@@ -12,5 +12,6 @@ add_executable(memorize main.cpp)
 target_link_libraries(memorize
         add_card memory_repository
         update_card
+        list_cards
         drogon_presenter
         web)

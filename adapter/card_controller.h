@@ -9,19 +9,25 @@
 
 #include "../usecase/add_card.h"
 #include "../usecase/update_card.h"
+#include "../usecase/list_cards.h"
 
 class CardController {
 public:
-    explicit CardController(std::shared_ptr<AddCard::IRequester> requester,
-                            std::shared_ptr<UpdateCard::IRequester> update_requester);
+    CardController(std::shared_ptr<AddCard::IRequester> requester,
+                            std::shared_ptr<UpdateCard::IRequester> update_requester,
+                            std::shared_ptr<ListCards::IRequester> list_requester);
 
     void Create(const std::string &word, const std::vector<std::string> &meanings, uint64_t create_time);
 
-    void Update(const std::string &word, const std::vector<std::string> &meanings, uint64_t next_time, uint64_t success);
+    void
+    Update(const std::string &word, const std::vector<std::string> &meanings, uint64_t next_time, uint64_t success);
+
+    void List(uint64_t before);
 
 private:
     std::shared_ptr<AddCard::IRequester> add_requester_;
     std::shared_ptr<UpdateCard::IRequester> update_requester_;
+    std::shared_ptr<ListCards::IRequester> list_requester_;
 };
 
 

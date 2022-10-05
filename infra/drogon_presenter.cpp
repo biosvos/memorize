@@ -42,3 +42,21 @@ void DrogonPresenter::Response(const UpdateCardResponse &rsp) {
     callback_(ret);
 }
 
+void DrogonPresenter::Response(const ListCardsResponse &rsp) {
+    Json::Value json;
+
+    json["cards"] = Json::Value(Json::arrayValue);
+    for (const auto &item: rsp.cards) {
+        Json::Value card_json;
+        card_json["card"] = Json::Value();
+
+        card_json["card"]["word"] = item.word;
+        json["cards"].append(card_json);
+//        std::cout << item.word << std::endl;
+    }
+
+    auto ret = drogon::HttpResponse::newHttpJsonResponse(json);
+//    ret->setStatusCode(drogon::k204NoContent);
+    callback_(ret);
+}
+
