@@ -9,10 +9,13 @@
 #include <drogon/drogon.h>
 #include "../usecase/add_card.h"
 #include "../usecase/update_card.h"
+#include "../usecase/list_cards.h"
 
-class DrogonPresenter : public AddCard::IResponder, public UpdateCard::IResponder {
+class DrogonPresenter : public AddCard::IResponder, public UpdateCard::IResponder, public ListCards::IResponder {
 public:
     explicit DrogonPresenter(std::function<void(const drogon::HttpResponsePtr &)> &callback);
+
+    void Response(const ListCardsResponse &rsp) override;
 
     void Response(const AddCardResponse &rsp) override;
 

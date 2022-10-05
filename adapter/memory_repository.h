@@ -17,6 +17,10 @@ public:
 
     std::error_code Update(const Card &card) override;
 
+    std::vector<Card> List() override;
+
+    std::vector<Card> ListBefore(uint64_t time) override;
+
 private:
     std::unordered_map<std::string, Card> cards_;
 };

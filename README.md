@@ -26,3 +26,9 @@ curl -v -X PUT http://127.0.0.1:8888/web/update \
   "success": 3
 }'
 ```
+
+## List
+```bash
+curl -v -X GET http://127.0.0.1:8888/web/list
+curl -v -X GET http://127.0.0.1:8888/web/list?before=124
+```

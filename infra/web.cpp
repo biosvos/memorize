@@ -78,4 +78,15 @@ void Web::BadRequest(const std::function<void(const drogon::HttpResponsePtr &)> 
     callback(ret);
 }
 
+void Web::ListCards(const drogon::HttpRequestPtr &req,
+                    std::function<void(const drogon::HttpResponsePtr &)> &&callback) const {
+    auto controller = factory_->CreateController(callback);
+    auto before = req->getOptionalParameter<uint64_t>("before");
+    if (before) {
+        controller->List(before.value());
+    } else {
+        controller->List(0);
+    }
+}
+
 
