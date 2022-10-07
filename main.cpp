@@ -1,21 +1,20 @@
 #include <utility>
 
 #include "adapter/memory_repository.h"
-#include "infra/web.h"
-#include "infra/drogon_presenter.h"
+#include "adapter/forgetting_curve.h"
+#include "infra/nana_ui.h"
 
-class Factory : public IWebFactory {
+class Factory : public IFactory {
 public:
     explicit Factory(std::shared_ptr<ICardRepository> repository) : repository_(std::move(repository)) {}
 
-public:
-    std::shared_ptr<CardController>
-    CreateController(std::function<void(const drogon::HttpResponsePtr &)> &callback) override {
-        auto presenter = std::make_shared<DrogonPresenter>(callback);
-        auto add_card = std::make_shared<AddCardUsecase>(presenter, repository_);
-        auto update_card = std::make_shared<UpdateCardUsecase>(presenter, repository_);
-        auto list_cards = std::make_shared<ListCardsUsecase>(presenter, repository_);
-        return std::make_shared<CardController>(add_card, update_card, list_cards);
+    std::shared_ptr<CardController> CreateController(std::shared_ptr<NanaUi> ui) override {
+        auto add_card = std::make_shared<AddCardUsecase>(ui, repository_);
+        auto update_card = std::make_shared<UpdateCardUsecase>(ui, repository_);
+        auto list_cards = std::make_shared<ListCardsUsecase>(ui, repository_);
+        auto forgetting_curve = std::make_shared<ForgettingCurve>();
+        auto predict = std::make_shared<PredictTrainingCasesUsecase>(ui, forgetting_curve);
+        return std::make_shared<CardController>(add_card, update_card, list_cards, predict);
     }
 
 private:
@@ -25,8 +24,8 @@ private:
 int main() {
     auto repository = std::make_shared<MemoryRepository>();
     auto factory = std::make_shared<Factory>(repository);
-    auto app = std::make_shared<Web>(factory);
-    drogon::app().registerController(app);
-    drogon::app().addListener("127.0.0.1", 8888).run();
+    auto app = std::make_shared<NanaUi>();
+    app->SetController(factory);
+    app->Run();
     return 0;
 }

@@ -11,9 +11,11 @@ add_subdirectory(adapter)
 add_subdirectory(infra)
 
 add_executable(memorize main.cpp)
-target_link_libraries(memorize
+target_link_libraries(memorize PRIVATE
         add_card memory_repository
         update_card
         list_cards
-        drogon_presenter
-        web)
+        prediect_training_cases
+        nana_ui
+        card_controller
+        forgetting_curve)
