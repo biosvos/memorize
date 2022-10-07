@@ -3,6 +3,8 @@ project(memorize)
 
 set(CMAKE_CXX_STANDARD 17)
 
+find_package(GTest REQUIRED)
+
 add_subdirectory(domain)
 add_subdirectory(usecase)
 add_subdirectory(adapter)
