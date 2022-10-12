@@ -3,6 +3,7 @@
 #include "adapter/memory_repository.h"
 #include "adapter/forgetting_curve.h"
 #include "infra/nana_ui.h"
+#include "infra/gtk_ui.h"
 
 class Factory : public IFactory {
 public:
@@ -22,10 +23,12 @@ private:
 };
 
 int main() {
-    auto repository = std::make_shared<MemoryRepository>();
-    auto factory = std::make_shared<Factory>(repository);
-    auto app = std::make_shared<NanaUi>();
-    app->SetController(factory);
+    auto app = std::make_shared<GtkUi>();
     app->Run();
+//    auto repository = std::make_shared<MemoryRepository>();
+//    auto factory = std::make_shared<Factory>(repository);
+//    auto app = std::make_shared<NanaUi>();
+//    app->SetController(factory);
+//    app->Run();
     return 0;
 }

@@ -18,4 +18,5 @@ target_link_libraries(memorize PRIVATE
         prediect_training_cases
         nana_ui
         card_controller
-        forgetting_curve)
+        forgetting_curve
+        gtk_ui)
