@@ -43,8 +43,6 @@ public:
     ListWidget() {
         Gtk::ListViewText view(4);
         set_child(view);
-//        view.set_model()
-//        auto store = std::make_shared<Gtk::ListStore>();
         view.set_column_title(0, "word");
         view.set_column_title(1, "meanings");
         view.set_column_title(2, "next");
@@ -55,7 +53,6 @@ public:
         view.set_text(row, 1, "b");
         view.set_text(row, 2, "c");
         view.set_text(row, 3, "d");
-
     }
 };
 
