@@ -5,7 +5,7 @@
 #include "infra/nana_ui.h"
 #include "infra/gtk_ui.h"
 
-class Factory : public IFactory {
+class Factory : public IFactory<NanaUi> {
 public:
     explicit Factory(std::shared_ptr<ICardRepository> repository) : repository_(std::move(repository)) {}
 
