@@ -7,58 +7,6 @@
 #include <utility>
 #include "gtk_ui.h"
 
-class AddWidget : public Gtk::Frame {
-public:
-    AddWidget() : button_("add") {
-        Gtk::Grid grid;
-        set_child(grid);
-        Gtk::Label word_label("단어");
-        grid.attach(word_label, 0, 0);
-        grid.attach(word_entry_, 1, 0);
-
-        Gtk::Label meanings_label("뜻");
-        grid.attach(meanings_label, 0, 1);
-        grid.attach(meanings_entry_, 1, 1);
-        grid.attach(button_, 1, 2);
-    }
-
-    Gtk::Entry word_entry_;
-    Gtk::Entry meanings_entry_;
-    Gtk::Button button_;
-};
-
-class TrainWidget : public Gtk::Frame {
-public:
-    TrainWidget() {
-        Gtk::Box box(Gtk::Orientation::VERTICAL);
-        set_child(box);
-        Gtk::Label word("A");
-        Gtk::Label meaings("B");
-        Gtk::Button button("button");
-        box.append(word);
-        box.append(meaings);
-        box.append(button);
-    }
-};
-
-class ListWidget : public Gtk::Frame {
-public:
-    ListWidget() {
-        Gtk::ListViewText view(4);
-        set_child(view);
-        view.set_column_title(0, "word");
-        view.set_column_title(1, "meanings");
-        view.set_column_title(2, "next");
-        view.set_column_title(3, "success");
-
-        auto row = view.append();
-        view.set_text(row, 0, "a");
-        view.set_text(row, 1, "b");
-        view.set_text(row, 2, "c");
-        view.set_text(row, 3, "d");
-    }
-};
-
 namespace {
     std::string &LeftTrim(std::string &s) {
         auto it = std::find_if(s.begin(), s.end(),
@@ -96,38 +44,100 @@ namespace {
     }
 }
 
+class AddWidget : public Gtk::Frame {
+public:
+    AddWidget() : button_("add") {
+        Gtk::Grid grid;
+        set_child(grid);
+        Gtk::Label word_label("단어");
+        grid.attach(word_label, 0, 0);
+        grid.attach(word_entry_, 1, 0);
+
+        Gtk::Label meanings_label("뜻");
+        grid.attach(meanings_label, 0, 1);
+        grid.attach(meanings_entry_, 1, 1);
+        grid.attach(button_, 1, 2);
+    }
+
+    Gtk::Entry word_entry_;
+    Gtk::Entry meanings_entry_;
+    Gtk::Button button_;
+};
+
+class TrainWidget : public Gtk::Frame {
+public:
+    TrainWidget() {
+        Gtk::Box box(Gtk::Orientation::VERTICAL);
+        set_child(box);
+        Gtk::Label word("A");
+        Gtk::Label meaings("B");
+        Gtk::Button button("button");
+        box.append(word);
+        box.append(meaings);
+        box.append(button);
+    }
+};
+
+class ListWidget : public Gtk::Frame {
+public:
+    ListWidget() : view_(4) {
+        set_child(view_);
+        view_.set_column_title(0, "word");
+        view_.set_column_title(1, "meanings");
+        view_.set_column_title(2, "next");
+        view_.set_column_title(3, "success");
+    }
+
+    Gtk::ListViewText view_;
+};
+
 
 class MainWindow : public Gtk::Window, public UiInteractor {
 public:
-    std::string GetWord() override {
+    std::string GetWordInAdd() override {
         auto str = std::string(add_.word_entry_.get_text());
         return ::Trim(str);
     }
 
 
-    std::vector<std::string> GetMeanings() override {
+    std::vector<std::string> GetMeaningsInAdd() override {
         auto str = add_.meanings_entry_.get_text();
         return Split(str, ",");
     }
 
-    void Clear() override {
+    void ClearInAdd() override {
         add_.word_entry_.set_text("");
         add_.meanings_entry_.set_text("");
     }
 
-    void Disable() override {
+    void DisableInAdd() override {
         add_.button_.set_sensitive(false);
         add_.word_entry_.set_sensitive(false);
         add_.meanings_entry_.set_sensitive(false);
     }
 
-    void Enable() override {
+    void EnableInAdd() override {
         add_.word_entry_.set_sensitive(true);
         add_.meanings_entry_.set_sensitive(true);
         add_.button_.set_sensitive(true);
     }
 
-//    ~MainWindow() = default;
+    void ClearInList() override {
+        list_.view_.clear_items();
+    }
+
+    void SetInList(const std::vector<Card> &cards) override {
+        const char *const delim = ", ";
+        for (const auto &item: cards) {
+            auto row = list_.view_.append();
+            list_.view_.set_text(row, 0, item.word);
+            std::ostringstream meanings;
+            copy(item.meanings.begin(), item.meanings.end(), std::ostream_iterator<std::string>(meanings, delim));
+            list_.view_.set_text(row, 1, meanings.str());
+            list_.view_.set_text(row, 2, "c");
+            list_.view_.set_text(row, 3, "d");
+        }
+    }
 
     explicit MainWindow(const std::shared_ptr<CardController> &controller) {
         set_title("Basic application");
@@ -145,8 +155,16 @@ public:
 
     void SetSignals(const std::shared_ptr<CardController> &controller) {
         add_.button_.signal_clicked().connect([&]() {
-            Disable();
-            controller->Create(GetWord(), GetMeanings(), 0);
+            DisableInAdd();
+            controller->Create(GetWordInAdd(), GetMeaningsInAdd(), 0);
+        });
+
+        notebook_.signal_switch_page().connect([&](auto widget, auto page) {
+            std::cout << page << std::endl;
+            if (page == 2) { // list
+                ClearInList();
+                controller->List(std::numeric_limits<time_t>::max());
+            }
         });
     }
 
@@ -187,11 +205,16 @@ void GtkUi::Response(const AddCardResponse &rsp) {
             std::cout << "unknown error" << std::endl;
             break;
     }
-    interactor_->Clear();
-    interactor_->Enable();
+    interactor_->ClearInAdd();
+    interactor_->EnableInAdd();
 }
 
 void GtkUi::Response(const ListCardsResponse &rsp) {
+    std::vector<UiInteractor::Card> cards;
+    for (const auto &item: rsp.cards) {
+        cards.push_back(UiInteractor::Card{item.word, item.meanings, item.next_time, item.nr_success});
+    }
+    interactor_->SetInList(cards);
 }
 
 void GtkUi::Response(const UpdateCardResponse &rsp) {

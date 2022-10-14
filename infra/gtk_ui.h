@@ -11,15 +11,26 @@ class UiInteractor {
 public:
     virtual ~UiInteractor() = default;
 
-    virtual std::string GetWord() = 0;
+    virtual std::string GetWordInAdd() = 0;
 
-    virtual std::vector<std::string> GetMeanings() = 0;
+    virtual std::vector<std::string> GetMeaningsInAdd() = 0;
 
-    virtual void Clear() = 0;
+    virtual void ClearInAdd() = 0;
 
-    virtual void Disable() = 0;
+    virtual void DisableInAdd() = 0;
 
-    virtual void Enable() = 0;
+    virtual void EnableInAdd() = 0;
+
+    virtual void ClearInList() = 0;
+
+    struct Card {
+        std::string word;
+        std::vector<std::string> meanings;
+        uint64_t time;
+        uint64_t success;
+    };
+
+    virtual void SetInList(const std::vector<Card> &cards) = 0;
 };
 
 class GtkUi : public std::enable_shared_from_this<GtkUi>,
