@@ -5,11 +5,11 @@
 #include "infra/nana_ui.h"
 #include "infra/gtk_ui.h"
 
-class Factory : public IFactory {
+class Factory : public IFactory<GtkUi> {
 public:
     explicit Factory(std::shared_ptr<ICardRepository> repository) : repository_(std::move(repository)) {}
 
-    std::shared_ptr<CardController> CreateController(std::shared_ptr<NanaUi> ui) override {
+    std::shared_ptr<CardController> CreateController(std::shared_ptr<GtkUi> ui) override {
         auto add_card = std::make_shared<AddCardUsecase>(ui, repository_);
         auto update_card = std::make_shared<UpdateCardUsecase>(ui, repository_);
         auto list_cards = std::make_shared<ListCardsUsecase>(ui, repository_);
@@ -23,10 +23,11 @@ private:
 };
 
 int main() {
-    auto app = std::make_shared<GtkUi>();
+    auto repository = std::make_shared<MemoryRepository>();
+    auto factory = std::make_shared<Factory>(repository);
+//    GtkUi(factory);
+    auto app = std::make_shared<GtkUi>(factory);
     app->Run();
-//    auto repository = std::make_shared<MemoryRepository>();
-//    auto factory = std::make_shared<Factory>(repository);
 //    auto app = std::make_shared<NanaUi>();
 //    app->SetController(factory);
 //    app->Run();

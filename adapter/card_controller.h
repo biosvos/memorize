@@ -35,5 +35,12 @@ private:
     std::shared_ptr<PredictTrainingCases::IRequester> predict_requester_;
 };
 
+template<typename T>
+class IFactory {
+public:
+    virtual ~IFactory() = default;
+
+    virtual std::shared_ptr<CardController> CreateController(std::shared_ptr<T> ui) = 0;
+};
 
 #endif //MEMORIZE_CARD_CONTROLLER_H

@@ -51,6 +51,6 @@ void NanaUi::Run() {
     nana::exec();
 }
 
-void NanaUi::SetController(const std::shared_ptr<IFactory> &factory) {
+void NanaUi::SetController(const std::shared_ptr<IFactory<NanaUi>> &factory) {
     controller_ = factory->CreateController(shared_from_this());
 }
