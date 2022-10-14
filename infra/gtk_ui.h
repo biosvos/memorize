@@ -7,6 +7,21 @@
 
 #include "../adapter/card_controller.h"
 
+class UiInteractor {
+public:
+    virtual ~UiInteractor() = default;
+
+    virtual std::string GetWord() = 0;
+
+    virtual std::vector<std::string> GetMeanings() = 0;
+
+    virtual void Clear() = 0;
+
+    virtual void Disable() = 0;
+
+    virtual void Enable() = 0;
+};
+
 class GtkUi : public std::enable_shared_from_this<GtkUi>,
               public AddCard::IResponder, public ListCards::IResponder,
               public UpdateCard::IResponder, public PredictTrainingCases::IResponder {
@@ -25,6 +40,7 @@ public:
 
 private:
     std::shared_ptr<IFactory<GtkUi>> factory_;
+    std::shared_ptr<UiInteractor> interactor_;
 };
 
 

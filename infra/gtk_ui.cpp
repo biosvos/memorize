@@ -59,9 +59,76 @@ public:
     }
 };
 
+namespace {
+    std::string &LeftTrim(std::string &s) {
+        auto it = std::find_if(s.begin(), s.end(),
+                               [](char c) {
+                                   return !std::isspace<char>(c, std::locale::classic());
+                               });
+        s.erase(s.begin(), it);
+        return s;
+    }
 
-class MainWindow : public Gtk::Window {
+    std::string &RightTrim(std::string &s) {
+        auto it = std::find_if(s.rbegin(), s.rend(),
+                               [](char c) {
+                                   return !std::isspace<char>(c, std::locale::classic());
+                               });
+        s.erase(it.base(), s.end());
+        return s;
+    }
+
+    std::string &Trim(std::string &s) {
+        return LeftTrim(RightTrim(s));
+    }
+
+    std::vector<std::string> Split(std::string str, const std::string &delim) {
+        size_t pos;
+        std::vector<std::string> ret;
+        std::string token;
+        while ((pos = str.find(delim)) != std::string::npos) {
+            token = str.substr(0, pos);
+            ret.push_back(Trim(token));
+            str.erase(0, pos + delim.length());
+        }
+        ret.push_back(Trim(str));
+        return ret;
+    }
+}
+
+
+class MainWindow : public Gtk::Window, public UiInteractor {
 public:
+    std::string GetWord() override {
+        auto str = std::string(add_.word_entry_.get_text());
+        return ::Trim(str);
+    }
+
+
+    std::vector<std::string> GetMeanings() override {
+        auto str = add_.meanings_entry_.get_text();
+        return Split(str, ",");
+    }
+
+    void Clear() override {
+        add_.word_entry_.set_text("");
+        add_.meanings_entry_.set_text("");
+    }
+
+    void Disable() override {
+        add_.button_.set_sensitive(false);
+        add_.word_entry_.set_sensitive(false);
+        add_.meanings_entry_.set_sensitive(false);
+    }
+
+    void Enable() override {
+        add_.word_entry_.set_sensitive(true);
+        add_.meanings_entry_.set_sensitive(true);
+        add_.button_.set_sensitive(true);
+    }
+
+//    ~MainWindow() = default;
+
     explicit MainWindow(const std::shared_ptr<CardController> &controller) {
         set_title("Basic application");
         set_default_size(200, 200);
@@ -78,8 +145,8 @@ public:
 
     void SetSignals(const std::shared_ptr<CardController> &controller) {
         add_.button_.signal_clicked().connect([&]() {
-            std::cout << "asdf" << std::endl;
-            controller->Create(add_.word_entry_.get_text(), {add_.meanings_entry_.get_text()}, 0);
+            Disable();
+            controller->Create(GetWord(), GetMeanings(), 0);
         });
     }
 
@@ -93,7 +160,16 @@ public:
 void GtkUi::Run() {
     auto controller = factory_->CreateController(shared_from_this());
     auto app = Gtk::Application::create("org.gtkmm.examples.base");
-    app->make_window_and_run<MainWindow>(0, nullptr, controller);
+
+    auto window = std::make_shared<MainWindow>(controller);
+    interactor_ = window;
+
+    app->signal_activate().connect([&]() {
+        app->add_window(*window);
+        window->show();
+    });
+    app->signal_shutdown().connect([&]() {});
+    app->run();
 }
 
 GtkUi::GtkUi(std::shared_ptr<IFactory<GtkUi>> factory) : factory_(std::move(factory)) {
@@ -111,10 +187,11 @@ void GtkUi::Response(const AddCardResponse &rsp) {
             std::cout << "unknown error" << std::endl;
             break;
     }
+    interactor_->Clear();
+    interactor_->Enable();
 }
 
 void GtkUi::Response(const ListCardsResponse &rsp) {
-
 }
 
 void GtkUi::Response(const UpdateCardResponse &rsp) {
