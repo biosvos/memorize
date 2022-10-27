@@ -44,3 +44,12 @@ std::vector<Card> MemoryRepository::ListBefore(uint64_t time) {
     }
     return ret;
 }
+
+std::optional<Card> MemoryRepository::Draw() {
+    for (const auto &[_, v]: cards_) {
+        if (v.GetNextTimeInSec() < time) {
+            ret.push_back(v);
+        }
+    }
+    return std::optional<Card>();
+}

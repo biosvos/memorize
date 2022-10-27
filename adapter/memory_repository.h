@@ -21,6 +21,8 @@ public:
 
     std::vector<Card> ListBefore(uint64_t time) override;
 
+    std::optional<Card> Draw(uint64_t time) override;
+
 private:
     std::unordered_map<std::string, Card> cards_;
 };
