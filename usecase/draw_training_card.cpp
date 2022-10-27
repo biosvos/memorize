@@ -15,5 +15,13 @@ DrawTrainingCard::DrawTrainingCard(std::shared_ptr<DrawTrainingCardUsecase::IRes
 
 void DrawTrainingCard::Request(const DrawTrainingCardRequest &req) {
     auto card = card_repository_->Draw();
+    if (!card) {
+        responder_->Response(DrawTrainingCardResponse{.card=std::nullopt});
+        return;
+    }
+    if (card->GetNextTimeInSec() > req.time) {
+        responder_->Response(DrawTrainingCardResponse{.card=std::nullopt});
+        return;
+    }
     responder_->Response(DrawTrainingCardResponse{.card=card});
 }

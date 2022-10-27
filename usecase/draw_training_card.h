@@ -10,7 +10,7 @@
 #include "card_repository.h"
 
 struct DrawTrainingCardRequest {
-
+    uint64_t time;
 };
 
 struct DrawTrainingCardResponse {

@@ -2,6 +2,7 @@
 // Created by biosvos on 9/30/22.
 //
 
+#include <algorithm>
 #include "memory_repository.h"
 
 std::error_code MemoryRepository::Add(const Card &card) {
@@ -46,10 +47,13 @@ std::vector<Card> MemoryRepository::ListBefore(uint64_t time) {
 }
 
 std::optional<Card> MemoryRepository::Draw() {
-    for (const auto &[_, v]: cards_) {
-        if (v.GetNextTimeInSec() < time) {
-            ret.push_back(v);
-        }
+    auto it = std::min_element(cards_.begin(), cards_.end(),
+                               [](const std::pair<std::string, Card> &a, const std::pair<std::string, Card> &b) {
+                                   return a.second.GetNextTimeInSec() < b.second.GetNextTimeInSec();
+                               });
+
+    if (it == cards_.end()) {
+        return std::nullopt;
     }
-    return std::optional<Card>();
+    return it->second;
 }
