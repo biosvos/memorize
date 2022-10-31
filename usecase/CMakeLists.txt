@@ -1,6 +1,1 @@
-add_library(add_card add_card.cpp)
-add_library(update_card update_card.cpp)
-add_library(list_cards list_cards.cpp)
-add_library(prediect_training_cases prediect_training_cases.cpp)
-
-add_library(draw_training_card draw_training_card.cpp)
+add_library(usecase_impl usecase_impl.cpp)

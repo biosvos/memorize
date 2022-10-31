@@ -5,6 +5,7 @@
 #include <gtkmm.h>
 #include <iostream>
 #include <utility>
+
 #include "gtk_ui.h"
 
 namespace {
@@ -139,7 +140,7 @@ public:
         }
     }
 
-    explicit MainWindow(const std::shared_ptr<CardController> &controller) {
+    explicit MainWindow() {
         set_title("Basic application");
         set_default_size(200, 200);
         set_child(notebook_);
@@ -150,23 +151,23 @@ public:
         notebook_.append_page(list_, "list");
         notebook_.show();
 
-        SetSignals(controller);
+//        SetSignals(controller);
     }
 
-    void SetSignals(const std::shared_ptr<CardController> &controller) {
-        add_.button_.signal_clicked().connect([&]() {
-            DisableInAdd();
-            controller->Create(GetWordInAdd(), GetMeaningsInAdd(), 0);
-        });
-
-        notebook_.signal_switch_page().connect([&](auto widget, auto page) {
-            std::cout << page << std::endl;
-            if (page == 2) { // list
-                ClearInList();
-                controller->List(std::numeric_limits<time_t>::max());
-            }
-        });
-    }
+//    void SetSignals(const std::shared_ptr<CardController> &controller) {
+//        add_.button_.signal_clicked().connect([&]() {
+//            DisableInAdd();
+//            controller->Create(GetWordInAdd(), GetMeaningsInAdd(), 0);
+//        });
+//
+//        notebook_.signal_switch_page().connect([&](auto widget, auto page) {
+//            std::cout << page << std::endl;
+//            if (page == 2) { // list
+//                ClearInList();
+//                controller->List(std::numeric_limits<time_t>::max());
+//            }
+//        });
+//    }
 
     Gtk::Notebook notebook_;
     AddWidget add_;
@@ -176,11 +177,11 @@ public:
 
 
 void GtkUi::Run() {
-    auto controller = factory_->CreateController(shared_from_this());
+//    auto controller = factory_->CreateController(shared_from_this());
     auto app = Gtk::Application::create("org.gtkmm.examples.base");
 
-    auto window = std::make_shared<MainWindow>(controller);
-    interactor_ = window;
+    auto window = std::make_shared<MainWindow>();
+//    interactor_ = window;
 
     app->signal_activate().connect([&]() {
         app->add_window(*window);
@@ -190,37 +191,37 @@ void GtkUi::Run() {
     app->run();
 }
 
-GtkUi::GtkUi(std::shared_ptr<IFactory<GtkUi>> factory) : factory_(std::move(factory)) {
+GtkUi::GtkUi(std::shared_ptr<IUsecase> usecase) : usecase_(std::move(usecase)) {
 }
 
-void GtkUi::Response(const AddCardResponse &rsp) {
-    switch (rsp.result) {
-        case AddCardError::kAddCardOk:
-            std::cout << "ok" << std::endl;
-            break;
-        case AddCardError::kAddCardConflicted:
-            std::cout << "already exists" << std::endl;
-            break;
-        case AddCardError::kAddCardUnknown:
-            std::cout << "unknown error" << std::endl;
-            break;
-    }
-    interactor_->ClearInAdd();
-    interactor_->EnableInAdd();
-}
-
-void GtkUi::Response(const ListCardsResponse &rsp) {
-    std::vector<UiInteractor::Card> cards;
-    for (const auto &item: rsp.cards) {
-        cards.push_back(UiInteractor::Card{item.word, item.meanings, item.next_time, item.nr_success});
-    }
-    interactor_->SetInList(cards);
-}
-
-void GtkUi::Response(const UpdateCardResponse &rsp) {
-
-}
-
-void GtkUi::Response(const PredictTrainingCasesResponse &rsp) {
-
-}
+//void GtkUi::Response(const AddCardResponse &rsp) {
+//    switch (rsp.result) {
+//        case AddCardError::kAddCardOk:
+//            std::cout << "ok" << std::endl;
+//            break;
+//        case AddCardError::kAddCardConflicted:
+//            std::cout << "already exists" << std::endl;
+//            break;
+//        case AddCardError::kAddCardUnknown:
+//            std::cout << "unknown error" << std::endl;
+//            break;
+//    }
+//    interactor_->ClearInAdd();
+//    interactor_->EnableInAdd();
+//}
+//
+//void GtkUi::Response(const ListCardsResponse &rsp) {
+//    std::vector<UiInteractor::Card> cards;
+//    for (const auto &item: rsp.cards) {
+//        cards.push_back(UiInteractor::Card{item.word, item.meanings, item.next_time, item.nr_success});
+//    }
+//    interactor_->SetInList(cards);
+//}
+//
+//void GtkUi::Response(const UpdateCardResponse &rsp) {
+//
+//}
+//
+//void GtkUi::Response(const PredictTrainingCasesResponse &rsp) {
+//
+//}

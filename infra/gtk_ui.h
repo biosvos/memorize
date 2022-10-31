@@ -5,7 +5,8 @@
 #ifndef MEMORIZE_GTK_UI_H
 #define MEMORIZE_GTK_UI_H
 
-#include "../adapter/card_controller.h"
+#include <memory>
+#include "../usecase/usecase.h"
 
 class UiInteractor {
 public:
@@ -33,25 +34,23 @@ public:
     virtual void SetInList(const std::vector<Card> &cards) = 0;
 };
 
-class GtkUi : public std::enable_shared_from_this<GtkUi>,
-              public AddCard::IResponder, public ListCards::IResponder,
-              public UpdateCard::IResponder, public PredictTrainingCases::IResponder {
+class GtkUi {
 public:
-    explicit GtkUi(std::shared_ptr<IFactory<GtkUi>> factory);
+    explicit GtkUi(std::shared_ptr<IUsecase> usecase);
 
     void Run();
 
-    void Response(const PredictTrainingCasesResponse &rsp) override;
-
-    void Response(const UpdateCardResponse &rsp) override;
-
-    void Response(const ListCardsResponse &rsp) override;
-
-    void Response(const AddCardResponse &rsp) override;
+//    void Response(const PredictTrainingCasesResponse &rsp) override;
+//
+//    void Response(const UpdateCardResponse &rsp) override;
+//
+//    void Response(const ListCardsResponse &rsp) override;
+//
+//    void Response(const AddCardResponse &rsp) override;
 
 private:
-    std::shared_ptr<IFactory<GtkUi>> factory_;
-    std::shared_ptr<UiInteractor> interactor_;
+    std::shared_ptr<IUsecase> usecase_;
+//    std::shared_ptr<UiInteractor> interactor_;
 };
 
 

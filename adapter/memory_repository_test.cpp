@@ -7,8 +7,8 @@
 
 TEST(memory_repository, draw) {
     MemoryRepository repo;
-    repo.Add(Card("a", {"a"}, 1, 1));
-    repo.Add(Card("b", {"b"}, 2, 2));
+    repo.Add(Domain::Card("a", {"a"}, 1, 1));
+    repo.Add(Domain::Card("b", {"b"}, 2, 2));
 
     auto card = repo.Draw();
 
