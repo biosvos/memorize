@@ -20,6 +20,8 @@ public:
 
     virtual std::optional<Card> Get(std::string_view word) = 0;
 
+    virtual std::optional<Card> Draw() = 0;
+
     virtual std::vector<Card> List() = 0;
 
     virtual std::vector<Card> ListBefore(uint64_t time) = 0;
