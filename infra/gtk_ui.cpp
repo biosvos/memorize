@@ -130,6 +130,27 @@ public:
             show_button_("show"),
             right_button_("right"),
             wrong_button_("wrong") {
+        SetLayout();
+        SetSignals();
+    }
+
+    void Activate() {
+        Clear();
+        auto card = usecase_->DrawCard(CurrentTime());
+        if (!card) {
+            return;
+        }
+        SetCard(card.value());
+    }
+
+private:
+    void SetSignals() {
+        show_button_.signal_clicked().connect(sigc::mem_fun(*this, &TrainWidget::ClickShowButton));
+        right_button_.signal_clicked().connect(sigc::mem_fun(*this, &TrainWidget::ClickRightButton));
+        wrong_button_.signal_clicked().connect(sigc::mem_fun(*this, &TrainWidget::ClickWrongButton));
+    }
+
+    void SetLayout() {
         Gtk::Box box(Gtk::Orientation::VERTICAL);
         set_child(box);
         box.append(word_);
@@ -137,10 +158,6 @@ public:
         box.append(show_button_);
         box.append(right_button_);
         box.append(wrong_button_);
-
-        show_button_.signal_clicked().connect(sigc::mem_fun(*this, &TrainWidget::ClickShowButton));
-        right_button_.signal_clicked().connect(sigc::mem_fun(*this, &TrainWidget::ClickRightButton));
-        wrong_button_.signal_clicked().connect(sigc::mem_fun(*this, &TrainWidget::ClickWrongButton));
     }
 
     void Clear() {
@@ -190,7 +207,6 @@ public:
         SetCard(card.value());
     }
 
-private:
     Gtk::Label word_;
     Gtk::Label meaings_;
     Gtk::Button show_button_;
@@ -272,12 +288,8 @@ public:
         notebook_.signal_switch_page().connect([&](auto widget, auto page) {
             std::cout << page << std::endl;
             if (page == 1) {
-                train_.Clear();
-                auto card = usecase_->DrawCard(CurrentTime());
-                if (!card) {
-                    return;
-                }
-                train_.SetCard(card.value());
+                train_.Activate();
+
             }
             if (page == 2) { // list
                 list_.Activate();
