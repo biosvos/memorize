@@ -2,3 +2,5 @@ add_library(memory_repository memory_repository.cpp)
 target_link_libraries(memory_repository PRIVATE card)
 add_executable(memory_repository_test memory_repository_test.cpp)
 target_link_libraries(memory_repository_test PRIVATE GTest::gtest GTest::gtest_main memory_repository)
+
+add_library(forgetting_curve forgetting_curve.cpp)
