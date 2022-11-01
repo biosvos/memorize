@@ -59,7 +59,13 @@ namespace {
 
 class AddWidget : public Gtk::Frame {
 public:
-    AddWidget() : button_("add") {
+    explicit AddWidget(std::shared_ptr<IUsecase> usecase) : usecase_(std::move(usecase)), button_("add") {
+        SetLayout();
+        SetSignal();
+    }
+
+private:
+    void SetLayout() {
         Gtk::Grid grid;
         set_child(grid);
         Gtk::Label word_label("단어");
@@ -72,9 +78,49 @@ public:
         grid.attach(button_, 1, 2);
     }
 
+    void SetSignal() {
+        button_.signal_clicked().connect(sigc::mem_fun(*this, &AddWidget::ClickAddButton));
+    }
+
+    void ClickAddButton() {
+        DisableAddButton();
+        usecase_->AddCard(IUsecase::Card{.word= GetWord(), .meanings = GetMeanings()});
+        Clear();
+        EnableAddButton();
+    }
+
+    void Clear() {
+        word_entry_.set_text("");
+        meanings_entry_.set_text("");
+    }
+
+    void DisableAddButton() {
+        button_.set_sensitive(false);
+        word_entry_.set_sensitive(false);
+        meanings_entry_.set_sensitive(false);
+    }
+
+    void EnableAddButton() {
+        word_entry_.set_sensitive(true);
+        meanings_entry_.set_sensitive(true);
+        button_.set_sensitive(true);
+    }
+
+    std::string GetWord() {
+        auto str = std::string(word_entry_.get_text());
+        return ::Trim(str);
+    }
+
+    std::vector<std::string> GetMeanings() {
+        auto str = meanings_entry_.get_text();
+        return Split(str, ",");
+    }
+
     Gtk::Entry word_entry_;
     Gtk::Entry meanings_entry_;
     Gtk::Button button_;
+
+    std::shared_ptr<IUsecase> usecase_;
 };
 
 class TrainWidget : public Gtk::Frame {
@@ -171,7 +217,10 @@ public:
 
 class MainWindow : public Gtk::Window {
 public:
-    explicit MainWindow(std::shared_ptr<IUsecase> usecase) : usecase_(std::move(usecase)), train_(usecase) {
+    explicit MainWindow(std::shared_ptr<IUsecase> usecase) :
+            usecase_(std::move(usecase)),
+            train_(usecase),
+            add_(usecase) {
         set_title("Basic application");
         set_default_size(200, 200);
         set_child(notebook_);
@@ -185,32 +234,6 @@ public:
         SetSignals();
     }
 
-    std::string GetWordInAdd() {
-        auto str = std::string(add_.word_entry_.get_text());
-        return ::Trim(str);
-    }
-
-    std::vector<std::string> GetMeaningsInAdd() {
-        auto str = add_.meanings_entry_.get_text();
-        return Split(str, ",");
-    }
-
-    void ClearInAdd() {
-        add_.word_entry_.set_text("");
-        add_.meanings_entry_.set_text("");
-    }
-
-    void DisableInAdd() {
-        add_.button_.set_sensitive(false);
-        add_.word_entry_.set_sensitive(false);
-        add_.meanings_entry_.set_sensitive(false);
-    }
-
-    void EnableInAdd() {
-        add_.word_entry_.set_sensitive(true);
-        add_.meanings_entry_.set_sensitive(true);
-        add_.button_.set_sensitive(true);
-    }
 
     void ClearInList() {
         list_.view_.clear_items();
@@ -231,12 +254,7 @@ public:
 
 
     void SetSignals() {
-        add_.button_.signal_clicked().connect([&]() {
-            DisableInAdd();
-            usecase_->AddCard(IUsecase::Card{.word= GetWordInAdd(), .meanings = GetMeaningsInAdd()});
-            ClearInAdd();
-            EnableInAdd();
-        });
+
 
         notebook_.signal_switch_page().connect([&](auto widget, auto page) {
             std::cout << page << std::endl;
