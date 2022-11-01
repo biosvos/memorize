@@ -14,4 +14,5 @@ add_executable(memorize main.cpp)
 target_link_libraries(memorize PRIVATE
         memory_repository
         usecase_impl
+        forgetting_curve
         gtk_ui)

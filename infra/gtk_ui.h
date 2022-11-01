@@ -31,7 +31,7 @@ public:
         uint64_t success;
     };
 
-    virtual void SetInList(const std::vector<Card> &cards) = 0;
+    virtual void SetInList(const std::vector<UiInteractor::Card> &cards) = 0;
 };
 
 class GtkUi {

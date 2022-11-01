@@ -1,4 +1,5 @@
 #include "adapter/memory_repository.h"
+#include "adapter/forgetting_curve.h"
 #include "infra/gtk_ui.h"
 #include "usecase/usecase_impl.h"
 
@@ -21,7 +22,8 @@
 
 int main() {
     auto repository = std::make_shared<MemoryRepository>();
-    auto usecase = std::make_shared<UsecaseImpl>(repository);
+    auto forgetting_curve = std::make_shared<ForgettingCurve>();
+    auto usecase = std::make_shared<UsecaseImpl>(repository, forgetting_curve);
 //    GtkUi(factory);
     auto app = std::make_shared<GtkUi>(usecase);
     app->Run();
