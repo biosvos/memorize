@@ -203,7 +203,20 @@ private:
 
 class ListWidget : public Gtk::Frame {
 public:
-    ListWidget() : view_(4) {
+    explicit ListWidget(std::shared_ptr<IUsecase> usecase) :
+            usecase_(std::move(usecase)),
+            view_(4) {
+        SetLayout();
+    }
+
+    void Activate() {
+        Clear();
+        auto cards = usecase_->ListCards();
+        SetItems(cards);
+    }
+
+private:
+    void SetLayout() {
         set_child(view_);
         view_.set_column_title(0, "word");
         view_.set_column_title(1, "meanings");
@@ -211,7 +224,26 @@ public:
         view_.set_column_title(3, "success");
     }
 
+    void Clear() {
+        view_.clear_items();
+    }
+
+    void SetItems(const std::vector<IUsecase::Card> &cards) {
+        const char *const delim = ", ";
+        for (const auto &item: cards) {
+            auto row = view_.append();
+            view_.set_text(row, 0, item.word);
+            std::ostringstream meanings;
+            copy(item.meanings.begin(), item.meanings.end(), std::ostream_iterator<std::string>(meanings, delim));
+            view_.set_text(row, 1, meanings.str());
+            view_.set_text(row, 2, std::to_string(item.next_time));
+            view_.set_text(row, 3, std::to_string(item.nr_success));
+        }
+    }
+
     Gtk::ListViewText view_;
+
+    std::shared_ptr<IUsecase> usecase_;
 };
 
 
@@ -219,6 +251,7 @@ class MainWindow : public Gtk::Window {
 public:
     explicit MainWindow(std::shared_ptr<IUsecase> usecase) :
             usecase_(std::move(usecase)),
+            list_(usecase),
             train_(usecase),
             add_(usecase) {
         set_title("Basic application");
@@ -235,27 +268,7 @@ public:
     }
 
 
-    void ClearInList() {
-        list_.view_.clear_items();
-    }
-
-    void SetInList(const std::vector<IUsecase::Card> &cards) {
-        const char *const delim = ", ";
-        for (const auto &item: cards) {
-            auto row = list_.view_.append();
-            list_.view_.set_text(row, 0, item.word);
-            std::ostringstream meanings;
-            copy(item.meanings.begin(), item.meanings.end(), std::ostream_iterator<std::string>(meanings, delim));
-            list_.view_.set_text(row, 1, meanings.str());
-            list_.view_.set_text(row, 2, std::to_string(item.next_time));
-            list_.view_.set_text(row, 3, std::to_string(item.nr_success));
-        }
-    }
-
-
     void SetSignals() {
-
-
         notebook_.signal_switch_page().connect([&](auto widget, auto page) {
             std::cout << page << std::endl;
             if (page == 1) {
@@ -267,9 +280,7 @@ public:
                 train_.SetCard(card.value());
             }
             if (page == 2) { // list
-                ClearInList();
-                auto cards = usecase_->ListCards();
-                SetInList(cards);
+                list_.Activate();
             }
         });
     }
