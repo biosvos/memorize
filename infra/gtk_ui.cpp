@@ -102,16 +102,18 @@ public:
         right_button_.hide();
         wrong_button_.hide();
 
-        word_.set_text("");
+        word_.set_text("not found");
         meaings_.set_text("");
         word_.show();
-        show_button_.show();
+        show_button_.hide();
     }
 
     void SetCard(const IUsecase::Card &current) {
         current_ = current;
         word_.set_text(current.word);
         meaings_.set_text(Join(current.meanings));
+
+        show_button_.show();
     }
 
     void ClickShowButton() {
@@ -125,13 +127,24 @@ public:
     void ClickRightButton() {
         usecase_->RightWithCard(current_, CurrentTime());
         Clear();
+        auto card = usecase_->DrawCard(CurrentTime());
+        if (!card) {
+            return;
+        }
+        SetCard(card.value());
     }
 
     void ClickWrongButton() {
         usecase_->WrongWithCard(current_, CurrentTime());
         Clear();
+        auto card = usecase_->DrawCard(CurrentTime());
+        if (!card) {
+            return;
+        }
+        SetCard(card.value());
     }
 
+private:
     Gtk::Label word_;
     Gtk::Label meaings_;
     Gtk::Button show_button_;
@@ -156,7 +169,7 @@ public:
 };
 
 
-class MainWindow : public Gtk::Window, public UiInteractor {
+class MainWindow : public Gtk::Window {
 public:
     explicit MainWindow(std::shared_ptr<IUsecase> usecase) : usecase_(std::move(usecase)), train_(usecase) {
         set_title("Basic application");
@@ -172,38 +185,38 @@ public:
         SetSignals();
     }
 
-    std::string GetWordInAdd() override {
+    std::string GetWordInAdd() {
         auto str = std::string(add_.word_entry_.get_text());
         return ::Trim(str);
     }
 
-    std::vector<std::string> GetMeaningsInAdd() override {
+    std::vector<std::string> GetMeaningsInAdd() {
         auto str = add_.meanings_entry_.get_text();
         return Split(str, ",");
     }
 
-    void ClearInAdd() override {
+    void ClearInAdd() {
         add_.word_entry_.set_text("");
         add_.meanings_entry_.set_text("");
     }
 
-    void DisableInAdd() override {
+    void DisableInAdd() {
         add_.button_.set_sensitive(false);
         add_.word_entry_.set_sensitive(false);
         add_.meanings_entry_.set_sensitive(false);
     }
 
-    void EnableInAdd() override {
+    void EnableInAdd() {
         add_.word_entry_.set_sensitive(true);
         add_.meanings_entry_.set_sensitive(true);
         add_.button_.set_sensitive(true);
     }
 
-    void ClearInList() override {
+    void ClearInList() {
         list_.view_.clear_items();
     }
 
-    void SetInList(const std::vector<UiInteractor::Card> &cards) override {
+    void SetInList(const std::vector<IUsecase::Card> &cards) {
         const char *const delim = ", ";
         for (const auto &item: cards) {
             auto row = list_.view_.append();
@@ -211,8 +224,8 @@ public:
             std::ostringstream meanings;
             copy(item.meanings.begin(), item.meanings.end(), std::ostream_iterator<std::string>(meanings, delim));
             list_.view_.set_text(row, 1, meanings.str());
-            list_.view_.set_text(row, 2, std::to_string(item.time));
-            list_.view_.set_text(row, 3, std::to_string(item.success));
+            list_.view_.set_text(row, 2, std::to_string(item.next_time));
+            list_.view_.set_text(row, 3, std::to_string(item.nr_success));
         }
     }
 
@@ -238,16 +251,7 @@ public:
             if (page == 2) { // list
                 ClearInList();
                 auto cards = usecase_->ListCards();
-                std::vector<UiInteractor::Card> to;
-                for (const auto &item: cards) {
-                    to.push_back(
-                            UiInteractor::Card{
-                                    .word = item.word,
-                                    .meanings = item.meanings,
-                                    .time = item.next_time,
-                                    .success = item.nr_success});
-                }
-                SetInList(to);
+                SetInList(cards);
             }
         });
     }
