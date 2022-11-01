@@ -12,10 +12,11 @@
 
 #include "usecase.h"
 #include "card_repository.h"
+#include "rememberer.h"
 
 class UsecaseImpl : public IUsecase {
 public:
-    explicit UsecaseImpl(std::shared_ptr<ICardRepository> card_repository);
+    UsecaseImpl(std::shared_ptr<ICardRepository> card_repository, std::shared_ptr<IRememberer> rememberer);
 
     std::error_code AddCard(IUsecase::Card card) override;
 
@@ -25,8 +26,15 @@ public:
 
     std::optional<IUsecase::Card> DrawCard(uint64_t current) override;
 
+    std::error_code RightWithCard(IUsecase::Card card, uint64_t current) override;
+
+    std::error_code WrongWithCard(IUsecase::Card card, uint64_t current) override;
+
 private:
     std::shared_ptr<ICardRepository> repository_;
+    std::shared_ptr<IRememberer> rememberer_;
+
+    static bool IsEqual(const Domain::Card &real_card, const Card &requested_card);
 };
 
 

@@ -8,8 +8,9 @@
 #include "usecase_impl.h"
 #include "../domain/card.h"
 
-UsecaseImpl::UsecaseImpl(std::shared_ptr<ICardRepository> card_repository) : repository_(
-        std::move(card_repository)) {}
+UsecaseImpl::UsecaseImpl(std::shared_ptr<ICardRepository> card_repository, std::shared_ptr<IRememberer> rememberer) :
+        repository_(std::move(card_repository)),
+        rememberer_(std::move(rememberer)) {}
 
 std::error_code UsecaseImpl::AddCard(IUsecase::Card card) {
     auto get = repository_->Get(card.word);
@@ -70,5 +71,69 @@ std::optional<IUsecase::Card> UsecaseImpl::DrawCard(uint64_t current) {
             .next_time = card->GetNextTimeInSec(),
             .nr_success = card->GetSuccessTimesInARow(),
     };
+}
+
+std::error_code UsecaseImpl::RightWithCard(IUsecase::Card card, uint64_t current) {
+    auto get = repository_->Get(card.word);
+    if (!get) {
+        return CardError::kCardNotFound;
+    }
+
+    if (!IsEqual(get.value(), card)) {
+        return CardError::kCardUnknown;
+    }
+
+    auto next = rememberer_->PredictSuccess(card.nr_success, current);
+
+    auto err = repository_->Update(Domain::Card(card.word, card.meanings, next, card.nr_success + 1));
+    if (err) {
+        return CardError::kCardUnknown;
+    }
+    return {};
+}
+
+std::error_code UsecaseImpl::WrongWithCard(IUsecase::Card card, uint64_t current) {
+    auto get = repository_->Get(card.word);
+    if (!get) {
+        return CardError::kCardNotFound;
+    }
+
+    if (!IsEqual(get.value(), card)) {
+        return CardError::kCardUnknown;
+    }
+
+    auto next = rememberer_->PredictFail(card.nr_success, current);
+
+    auto err = repository_->Update(Domain::Card(card.word, card.meanings, next, 0));
+    if (err) {
+        return CardError::kCardUnknown;
+    }
+    return {};
+}
+
+bool UsecaseImpl::IsEqual(const Domain::Card &real_card, const IUsecase::Card &requested_card) {
+    if (real_card.GetWord() != requested_card.word) {
+        return false;
+    }
+
+    if (real_card.GetMeanings().size() != requested_card.meanings.size()) {
+        return false;
+    }
+
+    for (int i = 0; i < real_card.GetMeanings().size(); ++i) {
+        if (real_card.GetMeanings()[i] != requested_card.meanings[i]) {
+            return false;
+        }
+    }
+
+    if (real_card.GetNextTimeInSec() != requested_card.next_time) {
+        return false;
+    }
+
+    if (real_card.GetSuccessTimesInARow() != requested_card.nr_success) {
+        return false;
+    }
+
+    return true;
 }
 

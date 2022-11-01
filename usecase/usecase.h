@@ -59,6 +59,10 @@ public:
     virtual std::vector<IUsecase::Card> ListCards() = 0;
 
     virtual std::optional<IUsecase::Card> DrawCard(uint64_t current) = 0;
+
+    virtual std::error_code RightWithCard(IUsecase::Card card, uint64_t current) = 0;
+
+    virtual std::error_code WrongWithCard(IUsecase::Card card, uint64_t current) = 0;
 };
 
 #endif //MEMORIZE_USECASE_H
