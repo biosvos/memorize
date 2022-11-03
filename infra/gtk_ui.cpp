@@ -270,6 +270,13 @@ public:
             list_(usecase),
             train_(usecase),
             add_(usecase) {
+        SetLayout();
+
+        SetSignals();
+    }
+
+private:
+    void SetLayout() {
         set_title("Basic application");
         set_default_size(200, 200);
         set_child(notebook_);
@@ -279,19 +286,13 @@ public:
         notebook_.append_page(train_, "train");
         notebook_.append_page(list_, "list");
         notebook_.show();
-
-        SetSignals();
     }
-
 
     void SetSignals() {
         notebook_.signal_switch_page().connect([&](auto widget, auto page) {
-            std::cout << page << std::endl;
             if (page == 1) {
                 train_.Activate();
-
-            }
-            if (page == 2) { // list
+            } else if (page == 2) { // list
                 list_.Activate();
             }
         });
