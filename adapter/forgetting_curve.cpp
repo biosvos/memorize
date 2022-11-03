@@ -1,40 +1,36 @@
 //
-// Created by biosvos on 10/7/22.
+// Created by biosvos on 11/1/22.
 //
 
 #include "forgetting_curve.h"
 
-static const int kMinute = 60;
-static const int kHour = 60 * kMinute;
-static const int kDay = 24 * kHour;
-static const int kWeek = 7 * kDay;
+namespace {
+    const int kMinute = 60;
+    const int kHour = 60 * kMinute;
+    const int kDay = 24 * kHour;
+    const int kWeek = 7 * kDay;
+}
 
-IRememberer::Time ForgettingCurve::PredictSuccess(uint64_t nr_success, uint64_t current_time) {
-    uint64_t ret = current_time;
+uint64_t ForgettingCurve::PredictSuccess(uint64_t nr_success, uint64_t current_time) {
     switch (nr_success) {
         case 0:
             // 10분 추가
-            ret += 10 * kMinute;
-            break;
+            return current_time + 10 * kMinute;
         case 1:
             // 하루
-            ret += kDay;
-            break;
+            return current_time + kDay;
         case 2:
             // 일주일
-            ret += kWeek;
-            break;
+            return current_time + kWeek;
         case 3:
             // 4 주
-            ret += 4 * kWeek;
-            break;
+            return current_time + 4 * kWeek;
         default:
             // 1년
-            ret += 365 * kDay;
+            return current_time + 365 * kDay;
     }
-    return Time{ret};
 }
 
-IRememberer::Time ForgettingCurve::PredictFail(uint64_t nr_success, uint64_t current_time) {
-    return Time{current_time};
+uint64_t ForgettingCurve::PredictFail(uint64_t nr_success, uint64_t current_time) {
+    return current_time;
 }

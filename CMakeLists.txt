@@ -12,11 +12,7 @@ add_subdirectory(infra)
 
 add_executable(memorize main.cpp)
 target_link_libraries(memorize PRIVATE
-        add_card memory_repository
-        update_card
-        list_cards
-        prediect_training_cases
-        nana_ui
-        card_controller
+        memory_repository
+        usecase_impl
         forgetting_curve
         gtk_ui)
