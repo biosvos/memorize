@@ -1,7 +1,5 @@
 {
   "dependencies": [
-    "drogon",
-    "gtest",
-    "nana"
+    "gtest"
   ]
 }
