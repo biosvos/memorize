@@ -42,6 +42,9 @@ std::optional<Domain::Card> ObjectBoxRepository::Draw() {
     obx::Box<CardStore> box(store);
     auto query = box.query().order(CardStore_::time).build();
     auto ret = query.findFirst();
+    if (!ret) {
+        return std::nullopt;
+    }
     return Domain::Card(ret->word, ret->meanings, ret->time, ret->success);
 }
 
