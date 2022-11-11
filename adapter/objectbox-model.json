@@ -1,0 +1,54 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:7661756028564693243",
+      "lastPropertyId": "5:4689529032782716958",
+      "name": "CardStore",
+      "properties": [
+        {
+          "id": "1:4125837030223078152",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1005407681258991254",
+          "name": "word",
+          "indexId": "1:9208094250117791354",
+          "type": 9,
+          "flags": 2080
+        },
+        {
+          "id": "3:8694437120558264601",
+          "name": "meanings",
+          "type": 30
+        },
+        {
+          "id": "4:4313610789189841712",
+          "name": "time",
+          "type": 6,
+          "flags": 8192
+        },
+        {
+          "id": "5:4689529032782716958",
+          "name": "success",
+          "type": 6,
+          "flags": 8192
+        }
+      ]
+    }
+  ],
+  "lastEntityId": "1:7661756028564693243",
+  "lastIndexId": "1:9208094250117791354",
+  "lastRelationId": "",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

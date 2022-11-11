@@ -12,7 +12,7 @@ add_subdirectory(infra)
 
 add_executable(memorize main.cpp)
 target_link_libraries(memorize PRIVATE
-        memory_repository
+        object_box_repository
         usecase_impl
         forgetting_curve
         gtk_ui)
