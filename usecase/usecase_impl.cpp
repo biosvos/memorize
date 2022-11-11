@@ -18,11 +18,18 @@ std::error_code UsecaseImpl::AddCard(IUsecase::Card card) {
         return CardError::kCardAlreadyExists;
     }
 
-    auto err = repository_->Add(Domain::Card(card.word, card.meanings, card.next_time, 0));
-    if (err) {
-        std::cerr << __FILE__ << "(@" << __LINE__ << "): " << err << std::endl;
-        return CardError::kCardUnknown;
+    try {
+        const Domain::Card domain_card = Domain::Card(card.word, card.meanings, card.next_time, 0);
+        auto err = repository_->Add(domain_card);
+        if (err) {
+            std::cerr << __FILE__ << "(@" << __LINE__ << "): " << err << std::endl;
+            return CardError::kCardUnknown;
+        }
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return CardError::kCardInvalid;
     }
+
     return {};
 }
 

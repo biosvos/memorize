@@ -9,6 +9,7 @@ enum class CardError {
     kCardUnknown = 1,
     kCardAlreadyExists,
     kCardNotFound,
+    kCardInvalid
 };
 
 struct CardErrorCategory : std::error_category {
@@ -24,6 +25,8 @@ struct CardErrorCategory : std::error_category {
                 return "card already exists";
             case CardError::kCardNotFound:
                 return "card not found";
+            case CardError::kCardInvalid:
+                return "card invalid";
             default:
                 return "";
         }
