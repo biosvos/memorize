@@ -13,4 +13,4 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(objectbox)
 add_library(object_box_repository object_box_repository.cpp card_store.obx.cpp card_store.obx.hpp)
-target_link_libraries(object_box_repository objectbox)
+target_link_libraries(object_box_repository PRIVATE card objectbox)
