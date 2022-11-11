@@ -23,8 +23,6 @@ public:
     virtual std::optional<Domain::Card> Draw() = 0;
 
     virtual std::vector<Domain::Card> List() = 0;
-
-    virtual std::vector<Domain::Card> ListBefore(uint64_t time) = 0;
 };
 
 

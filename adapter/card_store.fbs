@@ -1,0 +1,8 @@
+table CardStore {
+    id:ulong;
+    /// objectbox:unique
+    word:string;
+    meanings:[string];
+    time:uint64;
+    success:uint64;
+}
