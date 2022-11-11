@@ -19,8 +19,6 @@ public:
 
     std::vector<Domain::Card> List() override;
 
-    std::vector<Domain::Card> ListBefore(uint64_t time) override;
-
     std::optional<Domain::Card> Draw() override;
 
 private:

@@ -36,16 +36,6 @@ std::vector<Domain::Card> MemoryRepository::List() {
     return ret;
 }
 
-std::vector<Domain::Card> MemoryRepository::ListBefore(uint64_t time) {
-    std::vector<Domain::Card> ret;
-    for (const auto &[_, v]: cards_) {
-        if (v.GetNextTimeInSec() < time) {
-            ret.push_back(v);
-        }
-    }
-    return ret;
-}
-
 std::optional<Domain::Card> MemoryRepository::Draw() {
     auto it = std::min_element(cards_.begin(), cards_.end(),
                                [](const std::pair<std::string, Domain::Card> &a, const std::pair<std::string, Domain::Card> &b) {
