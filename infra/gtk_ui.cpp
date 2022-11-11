@@ -51,9 +51,18 @@ namespace {
     }
 
     std::string Join(std::vector<std::string> strings) {
-        std::ostringstream meanings;
-        copy(strings.begin(), strings.end(), std::ostream_iterator<std::string>(meanings, ","));
-        return meanings.str();
+        auto len = strings.size();
+        if (len == 0) {
+            return "";
+        }
+
+        std::ostringstream oss;
+        oss << strings[0];
+        for (int i = 1; i < len; ++i) {
+            oss << ", ";
+            oss << strings[i];
+        }
+        return oss.str();
     }
 }
 
@@ -245,13 +254,10 @@ private:
     }
 
     void SetItems(const std::vector<IUsecase::Card> &cards) {
-        const char *const delim = ", ";
         for (const auto &item: cards) {
             auto row = view_.append();
             view_.set_text(row, 0, item.word);
-            std::ostringstream meanings;
-            copy(item.meanings.begin(), item.meanings.end(), std::ostream_iterator<std::string>(meanings, delim));
-            view_.set_text(row, 1, meanings.str());
+            view_.set_text(row, 1, Join(item.meanings));
             view_.set_text(row, 2, std::to_string(item.next_time));
             view_.set_text(row, 3, std::to_string(item.nr_success));
         }
