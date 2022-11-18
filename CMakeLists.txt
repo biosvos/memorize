@@ -15,4 +15,5 @@ target_link_libraries(memorize PRIVATE
         object_box_repository
         usecase_impl
         forgetting_curve
-        gtk_ui)
+        gtk_ui
+        nana_ui)
