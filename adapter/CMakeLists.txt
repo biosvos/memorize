@@ -9,7 +9,7 @@ include(FetchContent)
 FetchContent_Declare(
         objectbox
         GIT_REPOSITORY https://github.com/objectbox/objectbox-c.git
-        GIT_TAG v0.16.0
+        GIT_TAG v0.18.0
 )
 FetchContent_MakeAvailable(objectbox)
 add_library(object_box_repository object_box_repository.cpp card_store.obx.cpp card_store.obx.hpp)
