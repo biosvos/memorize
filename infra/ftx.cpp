@@ -159,8 +159,12 @@ void Ftx::Add() {
     auto components = ftxui::Container::Vertical({
                                                          word_input,
                                                          meanings_input,
-                                                         add_button,
-                                                         back_button
+                                                         ftxui::Container::Horizontal(
+                                                                 {
+                                                                         add_button,
+                                                                         back_button
+                                                                 }
+                                                         )
                                                  });
 
     auto renderer = ftxui::Renderer(components, [&] {
