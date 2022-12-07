@@ -96,26 +96,48 @@ void Ftx::List() {
 
 void Ftx::Train2(IUsecase::Card &card) {
     auto screen = ftxui::ScreenInteractive::Fullscreen();
-    auto right_button = ftxui::Button("Right", [&] {
+    std::function<void()> right_clicked = [&] {
         usecase_->RightWithCard(card, CurrentTime());
         screen.ExitLoopClosure()();
-    });
-    auto wrong_button = ftxui::Button("Wrong", [&] {
+    };
+    auto right_button = ftxui::Button("Right", right_clicked);
+    std::function<void()> wrong_clicked = [&] {
         usecase_->WrongWithCard(card, CurrentTime());
         screen.ExitLoopClosure()();
+    };
+    auto wrong_button = ftxui::Button("Wrong", wrong_clicked);
+
+    auto components = ftxui::Container::Horizontal({
+                                                           right_button,
+                                                           wrong_button
+                                                   });
+
+    components |= ftxui::CatchEvent([&](const ftxui::Event &event) {
+        if (event == ftxui::Event::Return) {
+            right_clicked();
+            return true;
+        }
+
+        if (event.is_character()) {
+            if (event.character() == "1") {
+                right_clicked();
+                return true;
+            }
+            if (event.character() == "2") {
+                wrong_clicked();
+                return true;
+            }
+        }
+        return false;
     });
 
-    auto buttons = ftxui::Container::Horizontal({
-                                                        right_button,
-                                                        wrong_button
-                                                });
 
-    auto renderer = ftxui::Renderer(buttons, [&] {
+    auto renderer = ftxui::Renderer(components, [&] {
         return ftxui::vbox({
                                    ftxui::text(card.word),
                                    ftxui::text(Join(card.meanings)),
                                    ftxui::hbox({
-                                                       buttons->Render()
+                                                       components->Render()
                                                })
                            });
     });
@@ -125,14 +147,22 @@ void Ftx::Train2(IUsecase::Card &card) {
 
 void Ftx::Train1(IUsecase::Card &card) {
     auto screen = ftxui::ScreenInteractive::Fullscreen();
-    auto show_button = ftxui::Button("Show", [&] {
+    std::function<void()> show_clicked = [&] {
         Train2(card);
         screen.ExitLoopClosure()();
-    });
+    };
+    auto show_button = ftxui::Button("Show", show_clicked);
 
     auto components = ftxui::Container::Vertical({
                                                          show_button
                                                  });
+    components |= ftxui::CatchEvent([&](const ftxui::Event &event) {
+        if (event == ftxui::Event::Return) {
+            show_clicked();
+            return true;
+        }
+        return false;
+    });
 
     auto renderer = ftxui::Renderer(components, [&] {
         return ftxui::vbox({
