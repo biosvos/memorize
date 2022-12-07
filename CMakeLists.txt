@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.24)
 project(memorize)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -12,10 +12,9 @@ add_subdirectory(infra)
 
 add_executable(memorize main.cpp)
 target_link_libraries(memorize PRIVATE
-        object_box_repository
+#        object_box_repository
+        memory_repository
         usecase_impl
         forgetting_curve
-        gtk_ui
-        nana_ui
         ftx
         )

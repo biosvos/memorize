@@ -1,12 +1,10 @@
-#include "adapter/object_box_repository.h"
+#include "adapter/memory_repository.h"
 #include "adapter/forgetting_curve.h"
 #include "usecase/usecase_impl.h"
-//#include "infra/gtk_ui.h"
-//#include "infra/nana_ui.h"
 #include "infra/ftx.h"
 
 int main() {
-    auto repository = std::make_shared<ObjectBoxRepository>();
+    auto repository = std::make_shared<MemoryRepository>();
     auto forgetting_curve = std::make_shared<ForgettingCurve>();
     auto usecase = std::make_shared<UsecaseImpl>(repository, forgetting_curve);
 //    auto app = std::make_shared<GtkUi>(usecase);

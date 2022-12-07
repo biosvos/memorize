@@ -5,6 +5,10 @@
 #ifndef MEMORIZE_USECASE_H
 #define MEMORIZE_USECASE_H
 
+#include <optional>
+#include <vector>
+#include <string>
+
 class IUsecase {
 public:
     struct Card {

@@ -1,7 +1,6 @@
 {
   "dependencies": [
     "gtest",
-    "nana",
     "ftxui"
   ]
 }
