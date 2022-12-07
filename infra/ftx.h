@@ -15,7 +15,17 @@ public:
     void Run();
 
 private:
+    void MainEntry();
+
+    void Add();
+
     std::shared_ptr<IUsecase> usecase_;
+
+    void Train1(IUsecase::Card &card);
+
+    void Train2(IUsecase::Card &card);
+
+    void List();
 };
 
 
