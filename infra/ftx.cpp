@@ -236,7 +236,7 @@ void Ftx::MainEntry() {
     auto buttons = ftxui::Container::Horizontal({
                                                         ftxui::Button("Train", [&] {
                                                             auto card = usecase_->DrawCard(CurrentTime());
-                                                            if (card) {
+                                                            while (card) {
                                                                 Train1(card.value());
                                                             }
                                                         }),
