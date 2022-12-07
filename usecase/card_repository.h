@@ -6,7 +6,6 @@
 #define MEMORIZE_CARD_REPOSITORY_H
 
 #include <optional>
-#include <system_error>
 
 #include "../domain/card.h"
 
@@ -14,9 +13,9 @@ class ICardRepository {
 public:
     virtual ~ICardRepository() = default;
 
-    virtual std::error_code Add(const Domain::Card &card) = 0;
+    virtual void Add(const Domain::Card &card) = 0;
 
-    virtual std::error_code Update(const Domain::Card &card) = 0;
+    virtual void Update(const Domain::Card &card) = 0;
 
     virtual std::optional<Domain::Card> Get(std::string_view word) = 0;
 

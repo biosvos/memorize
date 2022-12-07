@@ -9,9 +9,9 @@
 
 class ObjectBoxRepository : public ICardRepository {
 public:
-    std::error_code Add(const Domain::Card &card) override;
+    void Add(const Domain::Card &card) override;
 
-    std::error_code Update(const Domain::Card &card) override;
+    void Update(const Domain::Card &card) override;
 
     std::optional<Domain::Card> Get(std::string_view word) override;
 

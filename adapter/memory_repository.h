@@ -5,17 +5,16 @@
 #ifndef MEMORIZE_MEMORY_REPOSITORY_H
 #define MEMORIZE_MEMORY_REPOSITORY_H
 
-#include <system_error>
 #include <unordered_map>
 #include "../usecase/card_repository.h"
 
 class MemoryRepository : public ICardRepository {
 public:
-    std::error_code Add(const Domain::Card &card) override;
+    void Add(const Domain::Card &card) override;
 
     std::optional<Domain::Card> Get(std::string_view word) override;
 
-    std::error_code Update(const Domain::Card &card) override;
+    void Update(const Domain::Card &card) override;
 
     std::vector<Domain::Card> List() override;
 
@@ -24,6 +23,5 @@ public:
 private:
     std::unordered_map<std::string, Domain::Card> cards_;
 };
-
 
 #endif //MEMORIZE_MEMORY_REPOSITORY_H

@@ -6,46 +6,28 @@
 #include <iostream>
 
 #include "usecase_impl.h"
-#include "../domain/card.h"
 
 UsecaseImpl::UsecaseImpl(std::shared_ptr<ICardRepository> card_repository, std::shared_ptr<IRememberer> rememberer) :
         repository_(std::move(card_repository)),
         rememberer_(std::move(rememberer)) {}
 
-std::error_code UsecaseImpl::AddCard(IUsecase::Card card) {
+void UsecaseImpl::AddCard(IUsecase::Card card) {
     auto get = repository_->Get(card.word);
     if (get) {
-        return CardError::kCardAlreadyExists;
+        throw std::logic_error("failed to add card, already exists");
     }
 
-    try {
-        const Domain::Card domain_card = Domain::Card(card.word, card.meanings, card.next_time, 0);
-        auto err = repository_->Add(domain_card);
-        if (err) {
-            std::cerr << __FILE__ << "(@" << __LINE__ << "): " << err << std::endl;
-            return CardError::kCardUnknown;
-        }
-    } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
-        return CardError::kCardInvalid;
-    }
-
-    return {};
+    auto domain_card = Domain::Card(card.word, card.meanings, card.next_time, 0);
+    repository_->Add(domain_card);
 }
 
-std::error_code UsecaseImpl::UpdateCard(IUsecase::Card card) {
+void UsecaseImpl::UpdateCard(IUsecase::Card card) {
     auto get = repository_->Get(card.word);
     if (!get) {
-        return CardError::kCardNotFound;
+        throw std::logic_error("not found card");
     }
 
-    auto err = repository_->Update(Domain::Card(card.word, card.meanings, card.next_time, card.nr_success));
-    if (err) {
-        std::cerr << __FILE__ << "(@" << __LINE__ << "): " << err << std::endl;
-        return CardError::kCardUnknown;
-    }
-
-    return {};
+    repository_->Update(Domain::Card(card.word, card.meanings, card.next_time, card.nr_success));
 }
 
 std::vector<IUsecase::Card> UsecaseImpl::ListCards() {
@@ -80,42 +62,34 @@ std::optional<IUsecase::Card> UsecaseImpl::DrawCard(uint64_t current) {
     };
 }
 
-std::error_code UsecaseImpl::RightWithCard(IUsecase::Card card, uint64_t current) {
+void UsecaseImpl::RightWithCard(IUsecase::Card card, uint64_t current) {
     auto get = repository_->Get(card.word);
     if (!get) {
-        return CardError::kCardNotFound;
+        throw std::logic_error("not found card");
     }
 
     if (!IsEqual(get.value(), card)) {
-        return CardError::kCardUnknown;
+        throw std::logic_error("card is not same");
     }
 
     auto next = rememberer_->PredictSuccess(card.nr_success, current);
 
-    auto err = repository_->Update(Domain::Card(card.word, card.meanings, next, card.nr_success + 1));
-    if (err) {
-        return CardError::kCardUnknown;
-    }
-    return {};
+    repository_->Update(Domain::Card(card.word, card.meanings, next, card.nr_success + 1));
 }
 
-std::error_code UsecaseImpl::WrongWithCard(IUsecase::Card card, uint64_t current) {
+void UsecaseImpl::WrongWithCard(IUsecase::Card card, uint64_t current) {
     auto get = repository_->Get(card.word);
     if (!get) {
-        return CardError::kCardNotFound;
+        throw std::logic_error("not found card");
     }
 
     if (!IsEqual(get.value(), card)) {
-        return CardError::kCardUnknown;
+        throw std::logic_error("card is not same");
     }
 
     auto next = rememberer_->PredictFail(card.nr_success, current);
 
-    auto err = repository_->Update(Domain::Card(card.word, card.meanings, next, 0));
-    if (err) {
-        return CardError::kCardUnknown;
-    }
-    return {};
+    repository_->Update(Domain::Card(card.word, card.meanings, next, 0));
 }
 
 bool UsecaseImpl::IsEqual(const Domain::Card &real_card, const IUsecase::Card &requested_card) {

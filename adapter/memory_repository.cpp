@@ -3,14 +3,14 @@
 //
 
 #include <algorithm>
+#include <stdexcept>
 #include "memory_repository.h"
 
-std::error_code MemoryRepository::Add(const Domain::Card &card) {
+void MemoryRepository::Add(const Domain::Card &card) {
     if (cards_.count(card.GetWord()) > 0) {
-        return std::make_error_code(std::errc::invalid_argument);
+        throw std::logic_error("already exists");
     }
     cards_[card.GetWord()] = card;
-    return {};
 }
 
 std::optional<Domain::Card> MemoryRepository::Get(std::string_view word) {
@@ -20,12 +20,11 @@ std::optional<Domain::Card> MemoryRepository::Get(std::string_view word) {
     return cards_[std::string(word)];
 }
 
-std::error_code MemoryRepository::Update(const Domain::Card &card) {
+void MemoryRepository::Update(const Domain::Card &card) {
     if (!cards_.count(card.GetWord())) {
-        return std::make_error_code(std::errc::invalid_argument);
+        throw std::logic_error("not found");
     }
     cards_[card.GetWord()] = card;
-    return {};
 }
 
 std::vector<Domain::Card> MemoryRepository::List() {

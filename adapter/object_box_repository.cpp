@@ -7,14 +7,13 @@
 #include "objectbox.hpp"
 #include "objectbox-model.h"
 
-std::error_code ObjectBoxRepository::Add(const Domain::Card &card) {
+void ObjectBoxRepository::Add(const Domain::Card &card) {
     obx::Store store(create_obx_model());
     obx::Box<CardStore> box(store);
     box.put(CardStore{.word = card.GetWord(), .meanings = card.GetMeanings()});
-    return {};
 }
 
-std::error_code ObjectBoxRepository::Update(const Domain::Card &card) {
+void ObjectBoxRepository::Update(const Domain::Card &card) {
     obx::Store store(create_obx_model());
     obx::Box<CardStore> box(store);
     auto query = box.query(CardStore_::word.equals(card.GetWord())).build();
@@ -23,7 +22,6 @@ std::error_code ObjectBoxRepository::Update(const Domain::Card &card) {
     ret->time = card.GetNextTimeInSec();
     ret->success = card.GetSuccessTimesInARow();
     box.put(*ret);
-    return {};
 }
 
 std::optional<Domain::Card> ObjectBoxRepository::Get(std::string_view word) {
