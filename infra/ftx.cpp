@@ -153,6 +153,9 @@ void Ftx::Add() {
     auto screen = ftxui::ScreenInteractive::Fullscreen();
     auto add_button = ftxui::Button("Add", [&] {
         usecase_->AddCard(IUsecase::Card{word, Split(meanings, ","), CurrentTime(), 0});
+        word.clear();
+        meanings.clear();
+        word_input->TakeFocus();
     });
     auto back_button = ftxui::Button("Back", screen.ExitLoopClosure());
 
