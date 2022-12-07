@@ -151,12 +151,13 @@ void Ftx::Add() {
     auto meanings_input = ftxui::Input(&meanings, "meanings");
 
     auto screen = ftxui::ScreenInteractive::Fullscreen();
-    auto add_button = ftxui::Button("Add", [&] {
+    std::function<void()> add_clicked = [&] {
         usecase_->AddCard(IUsecase::Card{word, Split(meanings, ","), CurrentTime(), 0});
         word.clear();
         meanings.clear();
         word_input->TakeFocus();
-    });
+    };
+    auto add_button = ftxui::Button("Add", add_clicked);
     auto back_button = ftxui::Button("Back", screen.ExitLoopClosure());
 
     auto components = ftxui::Container::Vertical({
@@ -169,6 +170,23 @@ void Ftx::Add() {
                                                                  }
                                                          )
                                                  });
+
+    components |= ftxui::CatchEvent([&](const ftxui::Event &event) {
+        if (event == ftxui::Event::Escape) {
+            screen.ExitLoopClosure()();
+            return true;
+        }
+        if (event == ftxui::Event::Return) {
+            if (word_input->Focused() and word.length() > 0) {
+                meanings_input->TakeFocus();
+                return true;
+            } else if (meanings_input->Focused() and meanings.length() > 0) {
+                add_clicked();
+                return true;
+            }
+        }
+        return false;
+    });
 
     auto renderer = ftxui::Renderer(components, [&] {
         return ftxui::vbox({
