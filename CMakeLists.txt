@@ -16,4 +16,6 @@ target_link_libraries(memorize PRIVATE
         usecase_impl
         forgetting_curve
         gtk_ui
-        nana_ui)
+        nana_ui
+        ftx
+        )
