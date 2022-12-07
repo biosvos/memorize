@@ -238,6 +238,7 @@ void Ftx::MainEntry() {
                                                             auto card = usecase_->DrawCard(CurrentTime());
                                                             while (card) {
                                                                 Train1(card.value());
+                                                                card = usecase_->DrawCard(CurrentTime());
                                                             }
                                                         }),
                                                         ftxui::Button("Add", [&] { Add(); }),
