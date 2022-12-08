@@ -23,21 +23,21 @@ static inline OBX_model* create_obx_model() {
     OBX_model* model = obx_model();
     if (!model) return NULL;
     
-    obx_model_entity(model, "CardStore", 1, 8312940545173196821);
-    obx_model_property(model, "id", OBXPropertyType_Long, 1, 8513981230467018490);
+    obx_model_entity(model, "CardStore", 1, 5663629822095342716);
+    obx_model_property(model, "id", OBXPropertyType_Long, 1, 8211009153616158819);
     obx_model_property_flags(model, OBXPropertyFlags_ID);
-    obx_model_property(model, "word", OBXPropertyType_String, 2, 7574171527671032860);
+    obx_model_property(model, "word", OBXPropertyType_String, 2, 5079168853041191491);
     obx_model_property_flags(model, (OBXPropertyFlags) (OBXPropertyFlags_INDEX_HASH | OBXPropertyFlags_UNIQUE));
-    obx_model_property_index_id(model, 1, 5161161862006283302);
-    obx_model_property(model, "meanings", OBXPropertyType_StringVector, 3, 6444422950567900145);
-    obx_model_property(model, "time", OBXPropertyType_Long, 4, 6682120493231345857);
+    obx_model_property_index_id(model, 1, 8111771531236856695);
+    obx_model_property(model, "meanings", OBXPropertyType_StringVector, 3, 2479990589859494267);
+    obx_model_property(model, "time", OBXPropertyType_Long, 4, 8798998621359631251);
     obx_model_property_flags(model, OBXPropertyFlags_UNSIGNED);
-    obx_model_property(model, "success", OBXPropertyType_Long, 5, 880767913521516613);
+    obx_model_property(model, "success", OBXPropertyType_Long, 5, 9177188423551719045);
     obx_model_property_flags(model, OBXPropertyFlags_UNSIGNED);
-    obx_model_entity_last_property_id(model, 5, 880767913521516613);
+    obx_model_entity_last_property_id(model, 5, 9177188423551719045);
     
-    obx_model_last_entity_id(model, 1, 8312940545173196821);
-    obx_model_last_index_id(model, 1, 5161161862006283302);
+    obx_model_last_entity_id(model, 1, 5663629822095342716);
+    obx_model_last_index_id(model, 1, 8111771531236856695);
     return model; // NOTE: the returned model will contain error information if an error occurred.
 }
 

@@ -2,6 +2,10 @@
 // Created by biosvos on 11/11/22.
 //
 
+#ifndef OBX_CPP_FILE
+#define OBX_CPP_FILE
+#endif
+
 #include "object_box_repository.h"
 #include "card_store.obx.hpp"
 #include "objectbox.hpp"
