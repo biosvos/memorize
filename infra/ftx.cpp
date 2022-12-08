@@ -108,11 +108,6 @@ void Ftx::Train2(IUsecase::Card &card) {
                                                    });
 
     components |= ftxui::CatchEvent([&](const ftxui::Event &event) {
-        if (event == ftxui::Event::Return) {
-            right_clicked();
-            return true;
-        }
-
         if (event.is_character()) {
             if (event.character() == "1") {
                 right_clicked();
@@ -151,13 +146,6 @@ void Ftx::Train1(IUsecase::Card &card) {
     auto components = ftxui::Container::Vertical({
                                                          show_button
                                                  });
-    components |= ftxui::CatchEvent([&](const ftxui::Event &event) {
-        if (event == ftxui::Event::Return) {
-            show_clicked();
-            return true;
-        }
-        return false;
-    });
 
     auto renderer = ftxui::Renderer(components, [&] {
         return ftxui::vbox({
