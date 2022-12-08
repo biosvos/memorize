@@ -29,6 +29,7 @@ void MemoryRepository::Update(const Domain::Card &card) {
 
 std::vector<Domain::Card> MemoryRepository::List() {
     std::vector<Domain::Card> ret;
+    ret.reserve(cards_.size());
     for (const auto &[_, v]: cards_) {
         ret.push_back(v);
     }
@@ -37,8 +38,9 @@ std::vector<Domain::Card> MemoryRepository::List() {
 
 std::optional<Domain::Card> MemoryRepository::Draw() {
     auto it = std::min_element(cards_.begin(), cards_.end(),
-                               [](const std::pair<std::string, Domain::Card> &a, const std::pair<std::string, Domain::Card> &b) {
-                                   return a.second.GetNextTimeInSec() < b.second.GetNextTimeInSec();
+                               [](const std::pair<std::string, Domain::Card> &a,
+                                  const std::pair<std::string, Domain::Card> &b) {
+                                   return a.second.GetNextTime() < b.second.GetNextTime();
                                });
 
     if (it == cards_.end()) {

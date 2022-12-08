@@ -8,10 +8,11 @@
 #include <stdexcept>
 
 namespace Domain {
+    Card::Card() : next_time_(CardTime::FromNanosecond(0)) {}
 
-    Card::Card(std::string word, std::vector<std::string> meanings, uint64_t next_time_in_sec,
+    Card::Card(std::string word, std::vector<std::string> meanings, CardTime next_time,
                uint64_t success_times_in_a_row) : word_(std::move(word)), meanings_(std::move(meanings)),
-                                                  next_time_in_sec_(next_time_in_sec),
+                                                  next_time_(next_time),
                                                   success_times_in_a_row_(success_times_in_a_row) {
         if (word_.length() == 0) {
             throw std::invalid_argument("wrong word");
@@ -36,12 +37,11 @@ namespace Domain {
         return meanings_;
     }
 
-    uint64_t Card::GetNextTimeInSec() const {
-        return next_time_in_sec_;
+    CardTime Card::GetNextTime() const {
+        return next_time_;
     }
 
     uint64_t Card::GetSuccessTimesInARow() const {
         return success_times_in_a_row_;
     }
-
 }

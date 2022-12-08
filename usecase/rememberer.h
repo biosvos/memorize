@@ -6,14 +6,15 @@
 #define MEMORIZE_REMEMBERER_H
 
 #include <cstdint>
+#include "../domain/card.h"
 
 class IRememberer {
 public:
     virtual ~IRememberer() = default;
 
-    virtual uint64_t PredictSuccess(uint64_t nr_success, uint64_t current_time) = 0;
+    virtual Domain::CardTime PredictSuccess(uint64_t nr_success, Domain::CardTime current_time) = 0;
 
-    virtual uint64_t PredictFail(uint64_t nr_success, uint64_t current_time) = 0;
+    virtual Domain::CardTime PredictFail(uint64_t nr_success, Domain::CardTime current_time) = 0;
 };
 
 #endif //MEMORIZE_REMEMBERER_H

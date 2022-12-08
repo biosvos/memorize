@@ -17,7 +17,7 @@ void UsecaseImpl::AddCard(IUsecase::Card card) {
         throw std::logic_error("failed to add card, already exists");
     }
 
-    auto domain_card = Domain::Card(card.word, card.meanings, card.next_time, 0);
+    auto domain_card = Domain::Card(card.word, card.meanings, card.next, 0);
     repository_->Add(domain_card);
 }
 
@@ -27,18 +27,19 @@ void UsecaseImpl::UpdateCard(IUsecase::Card card) {
         throw std::logic_error("not found card");
     }
 
-    repository_->Update(Domain::Card(card.word, card.meanings, card.next_time, card.nr_success));
+    repository_->Update(Domain::Card(card.word, card.meanings, card.next, card.nr_success));
 }
 
 std::vector<IUsecase::Card> UsecaseImpl::ListCards() {
     std::vector<IUsecase::Card> ret;
     auto cards = repository_->List();
 
+    ret.reserve(cards.size());
     for (const auto &item: cards) {
         ret.push_back(IUsecase::Card{
                 item.GetWord(),
                 item.GetMeanings(),
-                item.GetNextTimeInSec(),
+                item.GetNextTime(),
                 item.GetSuccessTimesInARow()
         });
     }
@@ -54,12 +55,12 @@ std::optional<IUsecase::Card> UsecaseImpl::DrawCard() {
     return IUsecase::Card{
             .word = card->GetWord(),
             .meanings = card->GetMeanings(),
-            .next_time = card->GetNextTimeInSec(),
+            .next = card->GetNextTime(),
             .nr_success = card->GetSuccessTimesInARow(),
     };
 }
 
-void UsecaseImpl::RightWithCard(IUsecase::Card card, uint64_t current) {
+void UsecaseImpl::RightWithCard(IUsecase::Card card, Domain::CardTime current) {
     auto get = repository_->Get(card.word);
     if (!get) {
         throw std::logic_error("not found card");
@@ -74,7 +75,7 @@ void UsecaseImpl::RightWithCard(IUsecase::Card card, uint64_t current) {
     repository_->Update(Domain::Card(card.word, card.meanings, next, card.nr_success + 1));
 }
 
-void UsecaseImpl::WrongWithCard(IUsecase::Card card, uint64_t current) {
+void UsecaseImpl::WrongWithCard(IUsecase::Card card, Domain::CardTime current) {
     auto get = repository_->Get(card.word);
     if (!get) {
         throw std::logic_error("not found card");
@@ -104,7 +105,7 @@ bool UsecaseImpl::IsEqual(const Domain::Card &real_card, const IUsecase::Card &r
         }
     }
 
-    if (real_card.GetNextTimeInSec() != requested_card.next_time) {
+    if (real_card.GetNextTime() != requested_card.next) {
         return false;
     }
 

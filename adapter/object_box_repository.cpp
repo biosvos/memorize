@@ -10,7 +10,8 @@
 void ObjectBoxRepository::Add(const Domain::Card &card) {
     obx::Store store(create_obx_model());
     obx::Box<CardStore> box(store);
-    box.put(CardStore{.word = card.GetWord(), .meanings = card.GetMeanings()});
+    box.put(CardStore{.word = card.GetWord(), .meanings = card.GetMeanings(),
+            .time = card.GetNextTime().Nanoseconds(), .success = card.GetSuccessTimesInARow()});
 }
 
 void ObjectBoxRepository::Update(const Domain::Card &card) {
@@ -19,7 +20,7 @@ void ObjectBoxRepository::Update(const Domain::Card &card) {
     auto query = box.query(CardStore_::word.equals(card.GetWord())).build();
     auto ret = query.findFirst();
     ret->meanings = card.GetMeanings();
-    ret->time = card.GetNextTimeInSec();
+    ret->time = card.GetNextTime().Nanoseconds();
     ret->success = card.GetSuccessTimesInARow();
     box.put(*ret);
 }
@@ -32,7 +33,7 @@ std::optional<Domain::Card> ObjectBoxRepository::Get(std::string_view word) {
     if (!ret) {
         return std::nullopt;
     }
-    return Domain::Card(ret->word, ret->meanings, ret->time, ret->success);
+    return Domain::Card(ret->word, ret->meanings, Domain::CardTime::FromNanosecond(ret->time), ret->success);
 }
 
 std::optional<Domain::Card> ObjectBoxRepository::Draw() {
@@ -43,7 +44,7 @@ std::optional<Domain::Card> ObjectBoxRepository::Draw() {
     if (!ret) {
         return std::nullopt;
     }
-    return Domain::Card(ret->word, ret->meanings, ret->time, ret->success);
+    return Domain::Card(ret->word, ret->meanings, Domain::CardTime::FromNanosecond(ret->time), ret->success);
 }
 
 std::vector<Domain::Card> ObjectBoxRepository::List() {
@@ -52,8 +53,9 @@ std::vector<Domain::Card> ObjectBoxRepository::List() {
     auto query = box.query().build();
     auto cards = query.find();
     std::vector<Domain::Card> ret;
+    ret.reserve(cards.size());
     for (const auto &item: cards) {
-        ret.emplace_back(item->word, item->meanings, item->time, item->success);
+        ret.emplace_back(item->word, item->meanings, Domain::CardTime::FromNanosecond(item->time), item->success);
     }
     return ret;
 }

@@ -25,9 +25,9 @@ public:
 
     std::optional<IUsecase::Card> DrawCard() override;
 
-    void RightWithCard(IUsecase::Card card, uint64_t current) override;
+    void RightWithCard(IUsecase::Card card, Domain::CardTime current) override;
 
-    void WrongWithCard(IUsecase::Card card, uint64_t current) override;
+    void WrongWithCard(IUsecase::Card card, Domain::CardTime current) override;
 
 private:
     std::shared_ptr<ICardRepository> repository_;

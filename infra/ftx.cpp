@@ -47,11 +47,6 @@ namespace {
         return ret;
     }
 
-    uint64_t CurrentTime() {
-        auto now = std::chrono::system_clock::now().time_since_epoch();
-        return std::chrono::duration_cast<std::chrono::seconds>(now).count();
-    }
-
     std::string Join(std::vector<std::string> strings) {
         auto len = strings.size();
         if (len == 0) {
@@ -79,7 +74,7 @@ void Ftx::List() {
         auto &n = datas.emplace_back();
         n.emplace_back(ftxui::text(item.word));
         n.emplace_back(ftxui::text(Join(item.meanings)));
-        n.emplace_back(ftxui::text(std::to_string(item.next_time)));
+        n.emplace_back(ftxui::text(std::to_string(item.next.Seconds())));
         n.emplace_back(ftxui::text(std::to_string(item.nr_success)));
     }
 
@@ -97,12 +92,12 @@ void Ftx::List() {
 void Ftx::Train2(IUsecase::Card &card) {
     auto screen = ftxui::ScreenInteractive::Fullscreen();
     std::function<void()> right_clicked = [&] {
-        usecase_->RightWithCard(card, CurrentTime());
+        usecase_->RightWithCard(card, Domain::CardTime::FromNow());
         screen.ExitLoopClosure()();
     };
     auto right_button = ftxui::Button("Right", right_clicked);
     std::function<void()> wrong_clicked = [&] {
-        usecase_->WrongWithCard(card, CurrentTime());
+        usecase_->WrongWithCard(card, Domain::CardTime::FromNow());
         screen.ExitLoopClosure()();
     };
     auto wrong_button = ftxui::Button("Wrong", wrong_clicked);
@@ -182,7 +177,7 @@ void Ftx::Add() {
 
     auto screen = ftxui::ScreenInteractive::Fullscreen();
     std::function<void()> add_clicked = [&] {
-        usecase_->AddCard(IUsecase::Card{word, Split(meanings, ","), CurrentTime(), 0});
+        usecase_->AddCard(IUsecase::Card{word, Split(meanings, ","), Domain::CardTime::FromNow(), 0});
         word.clear();
         meanings.clear();
         word_input->TakeFocus();
@@ -236,7 +231,7 @@ void Ftx::MainEntry() {
     auto buttons = ftxui::Container::Horizontal({
                                                         ftxui::Button("Train", [&] {
                                                             auto card = usecase_->DrawCard();
-                                                            while (card and card->next_time <= CurrentTime()) {
+                                                            while (card and card->next <= Domain::CardTime::FromNow()) {
                                                                 Train1(card.value());
                                                                 card = usecase_->DrawCard();
                                                             }

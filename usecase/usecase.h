@@ -8,13 +8,14 @@
 #include <optional>
 #include <vector>
 #include <string>
+#include "../domain/card.h"
 
 class IUsecase {
 public:
     struct Card {
         std::string word;
         std::vector<std::string> meanings;
-        uint64_t next_time;
+        Domain::CardTime next;
         uint64_t nr_success;
     };
 
@@ -30,9 +31,9 @@ public:
 
     virtual std::optional<IUsecase::Card> DrawCard() = 0;
 
-    virtual void RightWithCard(IUsecase::Card card, uint64_t current) = 0;
+    virtual void RightWithCard(IUsecase::Card card, Domain::CardTime current) = 0;
 
-    virtual void WrongWithCard(IUsecase::Card card, uint64_t current) = 0;
+    virtual void WrongWithCard(IUsecase::Card card, Domain::CardTime current) = 0;
 };
 
 #endif //MEMORIZE_USECASE_H
