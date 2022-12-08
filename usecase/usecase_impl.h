@@ -23,7 +23,7 @@ public:
 
     std::vector<IUsecase::Card> ListCards() override;
 
-    std::optional<IUsecase::Card> DrawCard(uint64_t current) override;
+    std::optional<IUsecase::Card> DrawCard() override;
 
     void RightWithCard(IUsecase::Card card, uint64_t current) override;
 

@@ -28,7 +28,7 @@ public:
 
     virtual std::vector<IUsecase::Card> ListCards() = 0;
 
-    virtual std::optional<IUsecase::Card> DrawCard(uint64_t current) = 0;
+    virtual std::optional<IUsecase::Card> DrawCard() = 0;
 
     virtual void RightWithCard(IUsecase::Card card, uint64_t current) = 0;
 

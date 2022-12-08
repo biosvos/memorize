@@ -235,10 +235,10 @@ void Ftx::Add() {
 void Ftx::MainEntry() {
     auto buttons = ftxui::Container::Horizontal({
                                                         ftxui::Button("Train", [&] {
-                                                            auto card = usecase_->DrawCard(CurrentTime());
-                                                            while (card) {
+                                                            auto card = usecase_->DrawCard();
+                                                            while (card and card->next_time <= CurrentTime()) {
                                                                 Train1(card.value());
-                                                                card = usecase_->DrawCard(CurrentTime());
+                                                                card = usecase_->DrawCard();
                                                             }
                                                         }),
                                                         ftxui::Button("Add", [&] { Add(); }),

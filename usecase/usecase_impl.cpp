@@ -46,12 +46,9 @@ std::vector<IUsecase::Card> UsecaseImpl::ListCards() {
     return ret;
 }
 
-std::optional<IUsecase::Card> UsecaseImpl::DrawCard(uint64_t current) {
+std::optional<IUsecase::Card> UsecaseImpl::DrawCard() {
     auto card = repository_->Draw();
     if (!card) {
-        return std::nullopt;
-    }
-    if (card->GetNextTimeInSec() > current) {
         return std::nullopt;
     }
     return IUsecase::Card{
