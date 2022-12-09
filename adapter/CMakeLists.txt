@@ -1,7 +1,5 @@
 add_library(memory_repository memory_repository.cpp)
 target_link_libraries(memory_repository PRIVATE card)
-add_executable(memory_repository_test memory_repository_test.cpp)
-target_link_libraries(memory_repository_test PRIVATE GTest::gtest GTest::gtest_main memory_repository)
 
 add_library(forgetting_curve forgetting_curve.cpp)
 
@@ -14,3 +12,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(objectbox)
 add_library(object_box_repository object_box_repository.cpp card_store.obx.cpp)
 target_link_libraries(object_box_repository PRIVATE card objectbox)
+
+add_executable(memory_repository_test memory_repository_test.cpp)
+target_link_libraries(memory_repository_test PRIVATE GTest::gtest GTest::gtest_main memory_repository)
+gtest_discover_tests(memory_repository_test)
