@@ -73,7 +73,6 @@ void Ftx::List() {
     for (const auto &item: cards) {
         auto &n = datas.emplace_back();
         n.emplace_back(ftxui::text(item.word));
-        n.emplace_back(ftxui::text(Join(item.meanings)));
         n.emplace_back(ftxui::text(std::to_string(item.next.Seconds())));
         n.emplace_back(ftxui::text(std::to_string(item.nr_success)));
     }
