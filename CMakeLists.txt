@@ -16,5 +16,5 @@ target_link_libraries(memorize PRIVATE
         object_box_repository
         usecase_impl
         forgetting_curve
-        ftx
+        ui
         )

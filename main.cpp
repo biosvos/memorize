@@ -1,13 +1,13 @@
 #include "adapter/object_box_repository.h"
 #include "adapter/forgetting_curve.h"
 #include "usecase/usecase_impl.h"
-#include "infra/ftx.h"
+#include "infra/ui.h"
 
 int main() {
     auto repository = std::make_shared<ObjectBoxRepository>();
     auto forgetting_curve = std::make_shared<ForgettingCurve>();
     auto usecase = std::make_shared<UsecaseImpl>(repository, forgetting_curve);
-    auto app = std::make_shared<Ftx>(usecase);
+    auto app = std::make_shared<Ui>(usecase);
     app->Run();
     return 0;
 }
