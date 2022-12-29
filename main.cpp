@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
     auto parser = argumentum::argument_parser{};
     auto params = parser.params();
 
-    parser.config().program(argv[0]).description("Accumulator");
+    parser.config().program(argv[0]).description("memorize words");
     params.add_command<CliOptions>("cli").help("cli");
 
     const argumentum::ParseResult &result = parser.parse_args(argc, argv, 1);
