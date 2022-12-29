@@ -1,6 +1,7 @@
 {
   "dependencies": [
     "gtest",
-    "ftxui"
+    "ftxui",
+    "argumentum"
   ]
 }

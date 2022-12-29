@@ -1,6 +1,6 @@
-#find_package(ftxui CONFIG REQUIRED)
-#add_library(ftx ftx.cpp)
-#target_link_libraries(ftx PRIVATE ftxui::dom ftxui::screen ftxui::component)
+find_package(ftxui CONFIG REQUIRED)
+add_library(ftx ftx.cpp)
+target_link_libraries(ftx PRIVATE ftxui::dom ftxui::screen ftxui::component)
 
 add_library(ui ui.cpp train.cpp add.cpp list.cpp)
 find_package(PkgConfig REQUIRED)

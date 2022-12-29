@@ -11,10 +11,16 @@ add_subdirectory(usecase)
 add_subdirectory(adapter)
 add_subdirectory(infra)
 
+find_package(Argumentum CONFIG REQUIRED)
 add_executable(memorize main.cpp)
+
+# argumentum include 파일을 찾지 못해서 아래처럼 우회하는 방법을 적용한다.
+target_include_directories(memorize PRIVATE ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
 target_link_libraries(memorize PRIVATE
+        Argumentum::argumentum
         object_box_repository
         usecase_impl
         forgetting_curve
         ui
+        ftx
         )
