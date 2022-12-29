@@ -23,6 +23,8 @@ namespace Domain {
 
         static CardTime FromNow();
 
+        static CardTime Diff(const CardTime &a, const CardTime &b);
+
         CardTime operator+(const CardTime &other) const;
 
         bool operator!=(const CardTime &other) const;

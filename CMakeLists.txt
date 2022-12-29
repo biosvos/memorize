@@ -24,3 +24,7 @@ target_link_libraries(memorize PRIVATE
         ui
         ftx
         )
+
+add_executable(instant instant.cpp)
+target_link_libraries(instant PRIVATE GTest::gtest GTest::gtest_main)
+gtest_discover_tests(instant)
