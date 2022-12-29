@@ -47,6 +47,10 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    if (result.commands.empty()) {
+        CliOptions("cli").execute(result);
+        return 0;
+    }
     result.commands.back()->execute(result);
     return 0;
 }
