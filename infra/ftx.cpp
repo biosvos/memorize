@@ -84,29 +84,6 @@ namespace {
 Ftx::Ftx(std::shared_ptr<IUsecase> usecase) :
         usecase_(std::move(usecase)) {}
 
-void Ftx::List() {
-    auto cards = usecase_->ListCards();
-
-    std::vector<std::vector<ftxui::Element>> datas;
-
-    for (const auto &item: cards) {
-        auto &n = datas.emplace_back();
-        n.emplace_back(ftxui::text(item.word));
-        n.emplace_back(ftxui::text(std::to_string(item.next.Seconds())));
-        n.emplace_back(ftxui::text(std::to_string(item.nr_success)));
-    }
-
-    ftxui::Table table(datas);
-
-    auto renderer = ftxui::Renderer([&] {
-        return ftxui::vbox({
-                                   table.Render()
-                           });
-    });
-    auto screen = ftxui::ScreenInteractive::Fullscreen();
-    screen.Loop(renderer);
-}
-
 void Ftx::Train2(IUsecase::Card &card) {
     auto screen = ftxui::ScreenInteractive::Fullscreen();
     std::function<void()> right_clicked = [&] {
@@ -249,8 +226,7 @@ void Ftx::MainEntry() {
                                                                 train_button_text = TimeToString(remain);
                                                             }
                                                         }),
-                                                        ftxui::Button("Add", [&] { Add(); }),
-                                                        ftxui::Button("List", [&] { List(); })
+                                                        ftxui::Button("Add", [&] { Add(); })
                                                 });
     auto component = ftxui::Renderer(buttons, [&] {
         return ftxui::vbox(

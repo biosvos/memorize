@@ -21,8 +21,6 @@ public:
 
     void UpdateCard(IUsecase::Card card) override;
 
-    std::vector<IUsecase::Card> ListCards() override;
-
     std::optional<IUsecase::Card> DrawCard() override;
 
     void RightWithCard(IUsecase::Card card, Domain::CardTime current) override;

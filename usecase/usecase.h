@@ -27,8 +27,6 @@ public:
 
     virtual void UpdateCard(IUsecase::Card card) = 0;
 
-    virtual std::vector<IUsecase::Card> ListCards() = 0;
-
     virtual std::optional<IUsecase::Card> DrawCard() = 0;
 
     virtual void RightWithCard(IUsecase::Card card, Domain::CardTime current) = 0;

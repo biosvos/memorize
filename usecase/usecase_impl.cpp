@@ -30,23 +30,6 @@ void UsecaseImpl::UpdateCard(IUsecase::Card card) {
     repository_->Update(Domain::Card(card.word, card.meanings, card.next, card.nr_success));
 }
 
-std::vector<IUsecase::Card> UsecaseImpl::ListCards() {
-    std::vector<IUsecase::Card> ret;
-    auto cards = repository_->List();
-
-    ret.reserve(cards.size());
-    for (const auto &item: cards) {
-        ret.push_back(IUsecase::Card{
-                item.GetWord(),
-                item.GetMeanings(),
-                item.GetNextTime(),
-                item.GetSuccessTimesInARow()
-        });
-    }
-
-    return ret;
-}
-
 std::optional<IUsecase::Card> UsecaseImpl::DrawCard() {
     auto card = repository_->Draw();
     if (!card) {
