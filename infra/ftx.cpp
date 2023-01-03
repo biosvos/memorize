@@ -10,6 +10,7 @@
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <sstream>
+#include <iomanip>
 
 namespace {
     std::string &LeftTrim(std::string &s) {
@@ -61,9 +62,27 @@ namespace {
         }
         return oss.str();
     }
+
+    std::string TimeToString(uint64_t seconds) {
+        std::stringstream ss;
+
+        bool flag = false;
+        for (auto divisor: {3600, 60}) {
+            if (flag || seconds >= divisor) {
+                flag = true;
+                ss << std::setfill('0') << std::setw(2) << seconds / divisor;
+                seconds %= divisor;
+                ss << ":";
+            }
+        }
+        ss << std::setfill('0') << std::setw(2) << seconds;
+
+        return ss.str();
+    }
 }
 
-Ftx::Ftx(std::shared_ptr<IUsecase> usecase) : usecase_(std::move(usecase)) {}
+Ftx::Ftx(std::shared_ptr<IUsecase> usecase) :
+        usecase_(std::move(usecase)) {}
 
 void Ftx::List() {
     auto cards = usecase_->ListCards();
@@ -215,12 +234,19 @@ void Ftx::Add() {
 }
 
 void Ftx::MainEntry() {
+    std::string train_button_text = "Train";
     auto buttons = ftxui::Container::Horizontal({
-                                                        ftxui::Button("Train", [&] {
+                                                        ftxui::Button(&train_button_text, [&] {
                                                             auto card = usecase_->DrawCard();
                                                             while (card and card->next <= Domain::CardTime::FromNow()) {
                                                                 Train1(card.value());
                                                                 card = usecase_->DrawCard();
+                                                            }
+                                                            if (card) {
+                                                                auto remain = Domain::CardTime::Diff(
+                                                                        Domain::CardTime::FromNow(),
+                                                                        card->next).Seconds();
+                                                                train_button_text = TimeToString(remain);
                                                             }
                                                         }),
                                                         ftxui::Button("Add", [&] { Add(); }),

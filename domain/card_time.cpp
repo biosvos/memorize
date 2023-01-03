@@ -3,10 +3,12 @@
 //
 
 #include <chrono>
+#include <algorithm>
 #include "card_time.h"
 
 namespace Domain {
-    CardTime::CardTime(uint64_t ns) : ns_(ns) {}
+    CardTime::CardTime(uint64_t ns) :
+            ns_(ns) {}
 
     CardTime CardTime::FromNow() {
         auto now = std::chrono::system_clock::now().time_since_epoch();
@@ -59,5 +61,10 @@ namespace Domain {
 
     bool CardTime::operator<(const CardTime &other) const {
         return ns_ < other.ns_;
+    }
+
+    CardTime CardTime::Diff(const CardTime &a, const CardTime &b) {
+        auto [lower, upper] = std::minmax(a, b);
+        return CardTime(upper.ns_ - lower.ns_);
     }
 }
