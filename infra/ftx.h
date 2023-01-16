@@ -17,7 +17,7 @@ public:
 private:
     void MainEntry();
 
-    void Add();
+    void Manage();
 
     std::shared_ptr<IUsecase> usecase_;
 

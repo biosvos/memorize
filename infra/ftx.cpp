@@ -150,7 +150,7 @@ void Ftx::Train1(IUsecase::Card &card) {
     screen.Loop(renderer);
 }
 
-void Ftx::Add() {
+void Ftx::Manage() {
     std::string word;
     std::string meanings;
 
@@ -233,7 +233,7 @@ void Ftx::MainEntry() {
                                                                 train_button_text = TimeToString(remain);
                                                             }
                                                         }),
-                                                        ftxui::Button("Add", [&] { Add(); })
+                                                        ftxui::Button("Manage", [&] { Manage(); })
                                                 });
     auto component = ftxui::Renderer(buttons, [&] {
         return ftxui::vbox(
