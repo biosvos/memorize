@@ -166,6 +166,12 @@ void Ftx::Add() {
         word_input->TakeFocus();
     };
     auto add_button = ftxui::Button("Add", add_clicked);
+    auto update_button = ftxui::Button("Update", [&] {
+        usecase_->UpdateCard(IUsecase::Card{word, Split(meanings, ","), Domain::CardTime::FromNow(), 0});
+        word.clear();
+        meanings.clear();
+        word_input->TakeFocus();
+    });
     auto back_button = ftxui::Button("Back", screen.ExitLoopClosure());
 
     auto components = ftxui::Container::Vertical({
@@ -174,6 +180,7 @@ void Ftx::Add() {
                                                          ftxui::Container::Horizontal(
                                                                  {
                                                                          add_button,
+                                                                         update_button,
                                                                          back_button
                                                                  }
                                                          )
@@ -202,6 +209,7 @@ void Ftx::Add() {
                                    meanings_input->Render(),
                                    ftxui::hbox({
                                                        add_button->Render(),
+                                                       update_button->Render(),
                                                        back_button->Render()
                                                })
                            });
