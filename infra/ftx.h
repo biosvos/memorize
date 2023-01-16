@@ -24,8 +24,6 @@ private:
     void Train1(IUsecase::Card &card);
 
     void Train2(IUsecase::Card &card);
-
-    void List();
 };
 
 
