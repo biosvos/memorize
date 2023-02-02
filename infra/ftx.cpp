@@ -231,6 +231,11 @@ void Ftx::MainEntry() {
                                                                         Domain::CardTime::FromNow(),
                                                                         card->next).Seconds();
                                                                 train_button_text = TimeToString(remain);
+                                                                std::stringstream ss;
+                                                                ss << "systemd-run --user --on-active=";
+                                                                ss << remain;
+                                                                ss << " notify-send train!";
+                                                                std::system(ss.str().c_str());
                                                             }
                                                         }),
                                                         ftxui::Button("Manage", [&] { Manage(); })
